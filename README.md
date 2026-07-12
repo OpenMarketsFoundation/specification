@@ -22,6 +22,11 @@ The repo is organized around four broad homes for current and future Open Market
 
 Only the current e-commerce material is normative today. Future market lanes can be added without changing current behavior.
 
+## Active Proposals
+
+- [Private structured commerce messages](proposals/private-structured-messages.md): replaces the colliding private order-message kinds with a versioned `kind:1327` envelope and named message types.
+- [Escrow, arbitration, and agents](proposals/escrow.md): records open design space without making custody or arbitration mandatory.
+
 ## Normative Status
 
 - Normative: [SPEC.md](SPEC.md) and copied current-spec sections in the pillar and lane files.
@@ -41,6 +46,7 @@ This repository builds on and preserves links to the current Nostr commerce desi
 - [nostr-commerce-skill](https://github.com/welliv/nostr-commerce-skill)
 - [Colabonate NIP-115 draft](https://github.com/Colabonate/nips/blob/colabonate-freedom-protocol/115.md)
 - [nostr-protocol/nips PR 2323](https://github.com/nostr-protocol/nips/pull/2323)
+- [Open Markets Orders proposal PR 10](https://github.com/OpenMarketsFoundation/specification/pull/10)
 - [Pontmore PIP-00 agent definition](https://github.com/pontmore/protocol/blob/main/PIP-00-agent-definition.md)
 - [Switchboard escrow architecture](https://github.com/samuelralak/switchboard/blob/master/docs/escrow-architecture.md)
 
