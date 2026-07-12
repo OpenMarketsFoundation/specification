@@ -15,12 +15,13 @@ This repository does not currently decide:
 - whether a marketplace should ever be a custodian of funds
 - which arbiter discovery mechanism is preferred
 - which payment proof tag shape should be canonical for escrow
-- whether checkout state should extend current `kind:16` messages or use new public events
+- whether checkout state should remain private through proposed `kind:1327` messages, use new public events, or combine private coordination with public state
 
 ## Exact References
 
 - [Colabonate NIP-115 draft](https://github.com/Colabonate/nips/blob/colabonate-freedom-protocol/115.md)
 - [nostr-protocol/nips PR 2323](https://github.com/nostr-protocol/nips/pull/2323)
+- [Private structured commerce messages](private-structured-messages.md)
 - [Pontmore PIP-00 agent definition](https://github.com/pontmore/protocol/blob/main/PIP-00-agent-definition.md)
 - [Switchboard escrow architecture](https://github.com/samuelralak/switchboard/blob/master/docs/escrow-architecture.md)
 
