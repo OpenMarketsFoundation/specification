@@ -4,6 +4,8 @@ Status: normative transposition of current shipping option and shipping update m
 
 This file copies the implementation-sensitive delivery sections from [../SPEC.md](../SPEC.md). The delivery pillar is broad enough to hold future physical, digital, service, ride, lodging, pickup, and milestone fulfillment work, but this PR does not add new delivery semantics.
 
+Experimental proposal: [Composable Shipping Destination Constraints](../proposals/destination-constraints.md) defines typed country, subdivision, and postal eligibility without changing the current normative transposition.
+
 ### Shipping Option (Kind: 30406)
 A specialized event type for defining shipping methods, costs, and constraints. Shipping options can be published by merchants or third-party providers (delivery companies, DVMs, etc.) and referenced by product listings or collections.
 
