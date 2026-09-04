@@ -4,6 +4,8 @@ Status: normative transposition of current listing, collection, draft, and revie
 
 This file copies the implementation-sensitive item sections from [../SPEC.md](../SPEC.md). Do not change kind numbers, tag names, tag shapes, required/optional semantics, examples, or normative keywords in this transposition.
 
+Experimental proposal: [Opaque Offer-Code Commitments for Product Listings](../proposals/offer-code-commitments.md). This proposal is not current normative behavior.
+
 ### Product Listing (Kind: 30402)
 
 Products are the core element in a marketplace. Each product listing MUST contain basic metadata and MAY contain additional details. Their configuration is the source of truth, overriding other possible configurations of other market elements such as collections, no configuration is cascaded to products, they MUST explicitly reference an attribute to inherit it.
