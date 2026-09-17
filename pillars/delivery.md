@@ -132,6 +132,12 @@ Standard Shipping:
    - Use geohash for distance-based sorting
    - Validate package constraints before offering options
 
+#### Related Experimental Proposal
+
+[NIP-52-backed event markets](../proposals/event-commerce.md) explores fixed
+pickup for event commerce without changing the current shipping-option
+contract in this normative transposition.
+
 #### 4. Shipping Updates
 Sent by merchant to provide delivery tracking and status information.
 

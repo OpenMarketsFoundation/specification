@@ -44,6 +44,13 @@ This repository builds on and preserves links to the current Nostr commerce desi
 - [Pontmore PIP-00 agent definition](https://github.com/pontmore/protocol/blob/main/PIP-00-agent-definition.md)
 - [Switchboard escrow architecture](https://github.com/samuelralak/switchboard/blob/master/docs/escrow-architecture.md)
 
+## Active Proposals
+
+- [NIP-52-backed event markets](proposals/event-commerce.md): composes calendar
+  events, product collections, lifecycle, participation, and fixed pickup.
+- [Escrow, arbitration, and agents](proposals/escrow.md): records open design
+  space without making escrow part of the current protocol.
+
 ## Contributing
 
 Read [AGENTS.md](AGENTS.md) before making structural or semantic changes. Structural PRs should preserve implementation-sensitive text and keep semantic changes in separate, explicit proposals.

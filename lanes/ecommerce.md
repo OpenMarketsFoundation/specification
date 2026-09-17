@@ -37,3 +37,9 @@ Watch-only clients are applications that allow users to display products without
 - Delivery: [../pillars/delivery.md](../pillars/delivery.md)
 
 The existing standard e-commerce flow remains in [../docs/architecture.md](../docs/architecture.md). Future lanes can be added without changing this lane's current requirements.
+
+## Related Experimental Proposals
+
+- [NIP-52-backed event markets](../proposals/event-commerce.md) composes the
+  existing e-commerce collection and pickup primitives with calendar events.
+  It does not change this lane's current normative requirements.

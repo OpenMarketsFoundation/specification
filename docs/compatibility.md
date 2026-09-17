@@ -99,3 +99,10 @@ The inherited text has issues that may deserve later cleanup, but this refactor 
 - minor grammar and spelling issues
 - history mentioning `expires` while current text uses `expiration`
 - lack of separate contribution and proposal workflow before this PR
+
+## Experimental Extensions
+
+[NIP-52-backed event markets](../proposals/event-commerce.md) is an additive
+proposal. It does not change the compatibility snapshot or the copied normative
+pillar and lane sections. Its lifecycle migration notes preserve an early
+namespaced implementation while proposing a neutral Open Markets declaration.
