@@ -47,7 +47,8 @@ This repository builds on and preserves links to the current Nostr commerce desi
 ## Active Proposals
 
 - [NIP-52-backed event markets](proposals/event-commerce.md): proposes a
-  dedicated organizer-signed merchant roster linked to a calendar event.
+  dedicated organizer-signed market and causal merchant authorization
+  linked to a calendar event.
 - [Escrow, arbitration, and agents](proposals/escrow.md): records open design
   space without making escrow part of the current protocol.
 

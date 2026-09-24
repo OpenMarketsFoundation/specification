@@ -103,7 +103,8 @@ The inherited text has issues that may deserve later cleanup, but this refactor 
 ## Experimental Extensions
 
 [NIP-52-backed event markets](../proposals/event-commerce.md) proposes an
-experimental kind `30409` organizer-signed merchant roster. It does not change
-the compatibility snapshot or copied normative pillar and lane sections.
+experimental kind `30409` market with kind `3841` causal merchant
+authorization. It does not change the compatibility snapshot or copied
+normative pillar and lane sections.
 Existing kind `30405` event collections and kind `30406` event pickup records
 remain historical records under their original terms.

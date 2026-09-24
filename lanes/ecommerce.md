@@ -41,5 +41,6 @@ The existing standard e-commerce flow remains in [../docs/architecture.md](../do
 ## Related Experimental Proposals
 
 - [NIP-52-backed event markets](../proposals/event-commerce.md) proposes a
-  dedicated merchant roster linked to a NIP-52 calendar event.
+  dedicated organizer market and causal merchant authorization linked to a
+  NIP-52 calendar event.
   It does not change this lane's current normative requirements.
