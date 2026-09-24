@@ -178,9 +178,9 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
 
 #### Related Experimental Proposal
 
-[NIP-52-backed event markets](../proposals/event-commerce.md) explores an
-event-backed profile of kind `30405` without changing the current collection
-contract in this normative transposition.
+[NIP-52-backed event markets](../proposals/event-commerce.md) proposes a
+dedicated kind `30409` organizer merchant roster. This does not change the
+current kind `30405` collection contract in this normative transposition.
 
 ### Drafts
 Products and collections can be saved as private drafts while being prepared for publication. This allows merchants to work on listings before making them publicly visible. Implementation MUST follow [NIP-37](https://github.com/nostr-protocol/nips/blob/master/37.md) for draft management.

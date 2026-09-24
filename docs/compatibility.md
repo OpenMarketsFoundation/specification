@@ -102,7 +102,8 @@ The inherited text has issues that may deserve later cleanup, but this refactor 
 
 ## Experimental Extensions
 
-[NIP-52-backed event markets](../proposals/event-commerce.md) is an additive
-proposal. It does not change the compatibility snapshot or the copied normative
-pillar and lane sections. Its lifecycle migration notes preserve an early
-namespaced implementation while proposing a neutral Open Markets declaration.
+[NIP-52-backed event markets](../proposals/event-commerce.md) proposes an
+experimental kind `30409` organizer-signed merchant roster. It does not change
+the compatibility snapshot or copied normative pillar and lane sections.
+Existing kind `30405` event collections and kind `30406` event pickup records
+remain historical records under their original terms.
