@@ -29,6 +29,13 @@ The payment request flow can operate in two modes:
 1. Direct: Merchant processes requests manually. Payment request is initiated by the merchant
 2. Service-assisted: Merchant's payment service handles requests. Payment request is initiated by the buyer
 
+#### Related Experimental Proposal
+
+[Bookings](../proposals/bookings.md) proposes a separate `kind:1331` flow for
+buying time (tables, rooms, services, event seats) with the merchant's
+confirmation first, without changing the order and payment messages in this
+normative transposition.
+
 ### Message Types
 #### 1. Order Creation
 Sent by buyer to initiate order process.

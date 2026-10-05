@@ -1,0 +1,85 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/content/terms.schema.yaml"
+title: "Booking terms (shared definitions)"
+description: "Reusable definitions for the JSON content of kind:1331 booking messages. Referenced by the per-type content schemas; not a message schema itself."
+definitions:
+  dateTime:
+    type: string
+    description: "ISO 8601 UTC date-time, e.g. 2026-09-27T17:00:00Z (time-based bookings)"
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+  date:
+    type: string
+    description: "ISO 8601 calendar date, e.g. 2027-03-10, anchored in the booked asset's time zone (date-based bookings)"
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+  tzid:
+    type: string
+    description: "IANA time zone of the booked asset, e.g. America/Los_Angeles"
+    minLength: 1
+  positiveInteger:
+    type: integer
+    minimum: 1
+  amount:
+    type: object
+    description: "A price, in the Orders draft shape"
+    required: [value, denomination, decimals]
+    properties:
+      value:
+        type: string
+        description: "Decimal string"
+        pattern: "^[0-9]+(\\.[0-9]+)?$"
+      denomination:
+        type: string
+        minLength: 1
+      decimals:
+        type: integer
+        minimum: 0
+    additionalProperties: false
+  balanceDue:
+    description: "When the balance is paid: at_venue, or an ISO 8601 date-time by which the business will request it"
+    oneOf:
+      - const: "at_venue"
+      - { "$ref": "#/definitions/dateTime" }
+  reason:
+    type: string
+    description: "Writers emit one of: full, unavailable, not_bookable, invalid_terms, payment_not_received, business_cancelled, customer_cancelled, other. A reader treats any other value as other."
+  contact:
+    type: object
+    properties:
+      name: { type: string, minLength: 1, maxLength: 200 }
+      phone: { type: string, minLength: 1, description: "Preferably E.164" }
+      email: { type: string, minLength: 1, description: "Plain address, no mailto: prefix. A malformed address does not invalidate the message; the request is declined with invalid_terms." }
+  timeBasedTerms:
+    type: object
+    description: "Time-based form: start (and end, earliestStart, latestStart) are date-times; tzid required"
+    required: [start, tzid]
+    properties:
+      start: { "$ref": "#/definitions/dateTime" }
+      end: { "$ref": "#/definitions/dateTime" }
+      earliestStart: { "$ref": "#/definitions/dateTime" }
+      latestStart: { "$ref": "#/definitions/dateTime" }
+      tzid: { "$ref": "#/definitions/tzid" }
+  dateBasedTerms:
+    type: object
+    description: "Date-based form: start (and end) are calendar dates; tzid, earliestStart and latestStart MUST be omitted"
+    required: [start]
+    properties:
+      start: { "$ref": "#/definitions/date" }
+      end: { "$ref": "#/definitions/date" }
+    not:
+      anyOf:
+        - required: [tzid]
+        - required: [earliestStart]
+        - required: [latestStart]
+  terms:
+    description: "Exactly one of the two forms"
+    oneOf:
+      - { "$ref": "#/definitions/timeBasedTerms" }
+      - { "$ref": "#/definitions/dateBasedTerms" }
+  option:
+    description: "One set of terms a business would confirm, in an availability_response"
+    allOf:
+      - { "$ref": "#/definitions/terms" }
+      - type: object
+        properties:
+          quantity: { "$ref": "#/definitions/positiveInteger" }
+          amount: { "$ref": "#/definitions/amount" }

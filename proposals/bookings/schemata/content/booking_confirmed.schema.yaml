@@ -1,0 +1,16 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/content/booking_confirmed.schema.yaml"
+title: "booking_confirmed content"
+description: "The terms that now hold. Sent by the business, or by the initiator of a modification to close it. For a paid booking, sent only after payment_confirmed."
+allOf:
+  - { "$ref": "terms.schema.yaml#/definitions/terms" }
+  - type: object
+    properties:
+      partySize: { "$ref": "terms.schema.yaml#/definitions/positiveInteger" }
+      quantity: { "$ref": "terms.schema.yaml#/definitions/positiveInteger" }
+      amount: { "$ref": "terms.schema.yaml#/definitions/amount" }
+      deposit: { "$ref": "terms.schema.yaml#/definitions/amount" }
+      balanceDue: { "$ref": "terms.schema.yaml#/definitions/balanceDue" }
+      note: { type: string }
+    dependencies:
+      deposit: [balanceDue]

@@ -44,6 +44,12 @@ This repository builds on and preserves links to the current Nostr commerce desi
 - [Pontmore PIP-00 agent definition](https://github.com/pontmore/protocol/blob/main/PIP-00-agent-definition.md)
 - [Switchboard escrow architecture](https://github.com/samuelralak/switchboard/blob/master/docs/escrow-architecture.md)
 
+## Active Proposals
+
+- [Bookings: Time-Based Purchases](proposals/bookings.md) proposes private
+  `kind:1331` booking messages for tables, rooms, services, and seats at
+  capacity-limited NIP-52 events, with availability queries and deposits.
+
 ## Contributing
 
 Read [AGENTS.md](AGENTS.md) before making structural or semantic changes. Structural PRs should preserve implementation-sensitive text and keep semantic changes in separate, explicit proposals.

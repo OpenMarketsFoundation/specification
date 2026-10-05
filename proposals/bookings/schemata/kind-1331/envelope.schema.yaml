@@ -1,0 +1,57 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/kind-1331/envelope.schema.yaml"
+title: "Booking message rumor (kind 1331)"
+description: "The NIP-59 rumor that carries every booking message. Writers produce it unsigned; a reader does not reject one that carries a sig. Validate the rumor with this schema, then parse content as JSON and validate it with content/<type>.schema.yaml for the type named in the type tag."
+type: object
+required: [id, pubkey, created_at, kind, tags, content]
+properties:
+  id: { type: string, pattern: "^[a-f0-9]{64}$" }
+  pubkey: { type: string, pattern: "^[a-f0-9]{64}$" }
+  created_at: { type: integer, minimum: 0 }
+  kind: { const: 1331 }
+  content:
+    type: string
+    description: "A JSON object, serialized; its shape is defined per message type"
+  tags:
+    type: array
+    items: { type: array, minItems: 1, items: { type: string } }
+    allOf:
+      - description: "p tag: the recipient. Elements after the pubkey (a NIP-01 relay hint, or anything else) are accepted and ignored; routing uses kind:10050 only"
+        contains:
+          type: array
+          items: [ { const: "p" }, { type: string, pattern: "^[a-f0-9]{64}$" } ]
+          minItems: 2
+      - description: "exactly one type tag"
+        contains:
+          type: array
+          items:
+            - const: "type"
+            - enum: [booking_request, booking_confirmed, booking_declined, booking_cancelled, booking_modification_request, booking_modification_accepted, booking_modification_declined, availability_request, availability_response]
+          minItems: 2
+          maxItems: 2
+      - description: "exactly one version tag, value 1"
+        contains:
+          type: array
+          items: [ { const: "version" }, { const: "1" } ]
+          minItems: 2
+          maxItems: 2
+      - description: "a tag (optional, opening messages only): the bookable asset coordinate; elements after it are accepted and ignored"
+        anyOf:
+          - not: { contains: { type: array, items: [ { const: "a" } ] } }
+          - contains:
+              type: array
+              items: [ { const: "a" }, { type: string, pattern: "^(31922|31923|30402):[a-f0-9]{64}:.+$" } ]
+              minItems: 2
+      - description: "conversation tag: absent on booking_request and availability_request (their own id is the thread id); required, a 64-hex event id, on every other type"
+        oneOf:
+          - allOf:
+              - contains: { type: array, items: [ { const: "type" }, { enum: [booking_request, availability_request] } ] }
+              - not: { contains: { type: array, items: [ { const: "conversation" } ] } }
+          - allOf:
+              - not: { contains: { type: array, items: [ { const: "type" }, { enum: [booking_request, availability_request] } ] } }
+              - contains:
+                  type: array
+                  items: [ { const: "conversation" }, { type: string, pattern: "^[a-f0-9]{64}$" } ]
+                  minItems: 2
+                  maxItems: 2
+              - not: { contains: { type: array, items: [ { const: "a" } ] } }

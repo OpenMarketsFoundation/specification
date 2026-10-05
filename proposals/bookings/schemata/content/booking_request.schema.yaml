@@ -1,0 +1,23 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/content/booking_request.schema.yaml"
+title: "booking_request content"
+description: "JSON content of a kind:1331 rumor with type booking_request. Opens a booking; the rumor's own id is the booking id. amount is never set by the customer."
+allOf:
+  - { "$ref": "terms.schema.yaml#/definitions/terms" }
+  - { "$ref": "terms.schema.yaml#/definitions/contact" }
+  - type: object
+    required: [name]
+    anyOf:
+      - required: [phone]
+      - required: [email]
+    properties:
+      partySize:
+        "$ref": "terms.schema.yaml#/definitions/positiveInteger"
+        description: "Optional (default 1); REQUIRED when the a tag names a bookable calendar event"
+      quantity: { "$ref": "terms.schema.yaml#/definitions/positiveInteger" }
+      note: { type: string }
+    not:
+      anyOf:
+        - required: [amount]
+        - required: [deposit]
+        - required: [balanceDue]

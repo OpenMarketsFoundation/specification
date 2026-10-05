@@ -1,0 +1,20 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/content/availability_request.schema.yaml"
+title: "availability_request content"
+description: "Asks what is available. Opens an availability exchange, not a booking; MUST NOT carry name, phone or email."
+allOf:
+  - { "$ref": "terms.schema.yaml#/definitions/terms" }
+  - type: object
+    properties:
+      partySize: { "$ref": "terms.schema.yaml#/definitions/positiveInteger" }
+      quantity: { "$ref": "terms.schema.yaml#/definitions/positiveInteger" }
+      replyRelays:
+        type: array
+        description: "Relays for the availability_response when the requester has no kind:10050 (e.g. a one-off key)"
+        minItems: 1
+        items: { type: string, pattern: "^wss?://" }
+    not:
+      anyOf:
+        - required: [name]
+        - required: [phone]
+        - required: [email]

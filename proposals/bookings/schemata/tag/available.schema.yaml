@@ -1,0 +1,10 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/tag/available.schema.yaml"
+title: "available tag"
+description: "On a bookable calendar event only: places still open, as last published by the business. Advisory; the booking_confirmed/booking_declined reply is authoritative. Only with capacity; MUST be between 0 and capacity."
+type: array
+minItems: 2
+maxItems: 2
+items:
+  - const: "available"
+  - { type: string, pattern: "^(0|[1-9][0-9]*)$", description: "non-negative integer, at most capacity" }

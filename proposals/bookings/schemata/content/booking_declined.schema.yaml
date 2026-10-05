@@ -1,0 +1,8 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/content/booking_declined.schema.yaml"
+title: "booking_declined content"
+description: "Sent by the business to decline a request that was never confirmed."
+type: object
+properties:
+  reason: { "$ref": "terms.schema.yaml#/definitions/reason" }
+  note: { type: string }
