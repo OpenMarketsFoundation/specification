@@ -1,0 +1,10 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/tag/openmarkets.schema.yaml"
+title: "openmarkets bookings tag"
+description: "On a kind:31922/31923 calendar event or a kind:30402 listing: marks it as bookable through the Bookings proposal, version 1. booking_request messages are sent to the event's author. At most one per event. Readers ignore further elements; a marker of a version the client does not implement means not bookable."
+type: array
+minItems: 3
+items:
+  - const: "openmarkets"
+  - const: "bookings"
+  - const: "1"

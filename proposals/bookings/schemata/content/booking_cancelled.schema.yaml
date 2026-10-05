@@ -1,0 +1,8 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/content/booking_cancelled.schema.yaml"
+title: "booking_cancelled content"
+description: "Sent by either party to cancel a confirmed booking or withdraw a pending request."
+type: object
+properties:
+  reason: { "$ref": "terms.schema.yaml#/definitions/reason" }
+  note: { type: string }

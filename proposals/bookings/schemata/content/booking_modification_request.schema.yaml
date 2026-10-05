@@ -1,0 +1,17 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/content/booking_modification_request.schema.yaml"
+title: "booking_modification_request content"
+description: "The complete proposed booking (not a difference). The business uses it to quote: amount, deposit and balanceDue MAY be set only by the business. The asset cannot change."
+allOf:
+  - { "$ref": "terms.schema.yaml#/definitions/terms" }
+  - { "$ref": "terms.schema.yaml#/definitions/contact" }
+  - type: object
+    properties:
+      partySize: { "$ref": "terms.schema.yaml#/definitions/positiveInteger" }
+      quantity: { "$ref": "terms.schema.yaml#/definitions/positiveInteger" }
+      amount: { "$ref": "terms.schema.yaml#/definitions/amount" }
+      deposit: { "$ref": "terms.schema.yaml#/definitions/amount" }
+      balanceDue: { "$ref": "terms.schema.yaml#/definitions/balanceDue" }
+      note: { type: string }
+    dependencies:
+      deposit: [balanceDue]

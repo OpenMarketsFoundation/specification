@@ -1,0 +1,10 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://github.com/OpenMarketsFoundation/specification/proposals/bookings/schemata/tag/capacity.schema.yaml"
+title: "capacity tag"
+description: "On a bookable calendar event only: maximum number of attendees, consumed by partySize. Optional; omitted means unlimited. MUST NOT appear without the openmarkets bookings tag."
+type: array
+minItems: 2
+maxItems: 2
+items:
+  - const: "capacity"
+  - { type: string, pattern: "^[1-9][0-9]*$", description: "positive integer" }
