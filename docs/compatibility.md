@@ -99,3 +99,11 @@ The inherited text has issues that may deserve later cleanup, but this refactor 
 - minor grammar and spelling issues
 - history mentioning `expires` while current text uses `expiration`
 - lack of separate contribution and proposal workflow before this PR
+
+## Experimental Extensions
+
+[Bookings](../proposals/bookings.md) adds an unsigned `kind:1331` rumor for
+booking time with a merchant, and optional `openmarkets`, `capacity`,
+`available`, and `tzid` tags on NIP-52 calendar events, NIP-99 listings, and
+`kind:0`. Clients that do not implement it ignore these tags and messages; no
+existing order, payment, or shipping message changes.

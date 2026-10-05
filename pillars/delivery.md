@@ -132,6 +132,12 @@ Standard Shipping:
    - Use geohash for distance-based sorting
    - Validate package constraints before offering options
 
+#### Related Experimental Proposal
+
+[Bookings](../proposals/bookings.md) proposes booking time at a merchant's
+location, which needs no shipping option, without changing the current
+shipping-option contract in this normative transposition.
+
 #### 4. Shipping Updates
 Sent by merchant to provide delivery tracking and status information.
 
