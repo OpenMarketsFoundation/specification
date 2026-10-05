@@ -176,6 +176,13 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
    - Optional location data helps with marketplace organization
    - Enables geographic grouping of related products
 
+#### Related Experimental Proposal
+
+[NIP-52-backed event markets](../proposals/event-commerce.md) proposes a
+kind `30409` organizer market and kind `3841` causal merchant authorization.
+This does not change the current kind `30405` collection contract in this
+normative transposition.
+
 ### Drafts
 Products and collections can be saved as private drafts while being prepared for publication. This allows merchants to work on listings before making them publicly visible. Implementation MUST follow [NIP-37](https://github.com/nostr-protocol/nips/blob/master/37.md) for draft management.
 
