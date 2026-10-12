@@ -172,3 +172,7 @@ Sent by merchant to provide delivery tracking and status information.
   "content": "Shipping status and tracking information"
 }
 ```
+
+## Experimental proposals
+
+- [Merchant shipping tables and combined basket pricing](../proposals/merchant-shipping-tables.md): reusable merchant-authored rate tables, product packing and handling adjustments, and free-shipping thresholds. This proposal adds a calculated shipping mode; it does not change the current normative material above.
