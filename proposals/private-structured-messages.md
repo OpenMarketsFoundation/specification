@@ -50,14 +50,16 @@ payment lifecycle events are outside this proposal.
 
 Private structured commerce messages use inner rumor kind `1327`.
 
-Kind `1327` is a regular event kind and is currently unassigned in the Nostr
-event-kind registry. Adoption of this proposal requires coordinating and
-registering that assignment upstream. An apparently unused number is not a
-durable reservation by itself.
+Kind `1327` is the proposed regular event kind, not a reserved assignment.
+Implementers must check and coordinate the upstream kind registry before
+adoption. Experimental implementation does not make the assignment normative;
+an apparently unused number is not a durable reservation by itself.
 
 The kind `1327` rumor is sealed and gift wrapped according to NIP-59. Senders
-SHOULD publish a recipient gift wrap and a self-addressed gift wrap according
-to NIP-17 recovery guidance.
+MUST create independent recipient and sender copies according to NIP-17,
+except where its explicitly chosen disappearing-message behavior applies.
+Each copy follows that recipient's declared kind-10050 inbox relays. A relay
+ACK is delivery evidence, not receipt, acceptance, payment or fulfillment.
 
 ## Envelope
 
@@ -73,29 +75,52 @@ A version 1 structured commerce rumor has this shape:
     ["p", "<recipient-pubkey>", "<relay-hint>"],
     ["conversation", "<stable-conversation-id>"],
     ["order", "<order-id>"],
+    ["operation", "<32-lowercase-hex-operation-id>"],
     ["type", "payment_confirmed"],
     ["version", "1"]
   ],
-  "content": "{\"amount\":\"12\",\"currency\":\"SAT\"}"
+  "content": "{\"request\":\"<payment-request-operation-id>\",\"payment_id\":\"<rail-payment-identity>\",\"amount\":{\"value\":\"12\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"<invoice>\"}}"
 }
 ```
 
 The rumor MUST contain:
 
-- one or more `p` tags naming the recipients;
+- exactly one `p` tag naming the other party in the version 1 two-party profile;
 - one `conversation` tag containing a stable, application-independent
   conversation identifier;
 - one `type` tag containing a registered named message type;
-- one `version` tag containing `1`.
+- one `version` tag containing `1`;
+- one `operation` tag containing 32 lowercase hexadecimal characters, generated
+  with at least 128 bits of randomness for each distinct logical operation;
+- one `order` tag containing the stable private order identifier.
 
-The rumor SHOULD contain an `order` tag once an order identifier exists. The
-conversation identifier MAY equal the order identifier for simple fixed-price
-orders. Negotiations that begin before an order is committed MAY retain an
-earlier trade or conversation identifier while adding the eventual order
-identifier separately.
+The order identifier may identify a proposed order before merchant acceptance;
+it does not establish that an accepted order exists. The conversation identifier
+MAY equal the order identifier for simple fixed-price orders. Negotiations may
+retain an earlier conversation identifier while adding separate order IDs.
+An order identity MUST NOT be reused for an unrelated purchase. Identifiers are
+opaque strings of at most 128 characters; use application-independent random
+identifiers rather than URLs or a merchant-local database primary key.
+
+`conversation`, `order`, `operation`, `type` and `version` MUST each appear once
+with exactly two tag elements. `p` has two elements plus an optional relay hint.
+Duplicate singleton tags, conflicting identities and a supplied rumor ID that
+does not match NIP-01 serialization MUST be rejected. The rumor is unsigned;
+sender authentication belongs to the NIP-59 seal, not a rumor `sig` field.
+
+The base version 1 profile is intentionally two-party. A future multiparty or
+delegated-verifier profile must specify participants, recipients and authority;
+it must not silently reinterpret these payloads or recipient rules.
 
 The `content` field MUST contain a JSON object conforming to the schema for the
 named message type. Message schemas may define additional required tags.
+Duplicate JSON properties and non-finite numbers MUST be rejected. Payload
+fields outside the schema MUST NOT be silently treated as registered extensions.
+
+The exact proposed schemas, actor/reference rules, capability representation,
+synthetic examples and validation command are defined in the
+[version 1 implementation contract](private-commerce/v1/README.md). That
+contract is part of this experimental proposal, not current `SPEC.md` behavior.
 
 A message type has one content shape within a protocol version. Extensions
 that require a different content shape MUST register a distinct type name or a
@@ -120,15 +145,24 @@ Receipt of an `order` message does not prove payment or merchant acceptance.
 
 Merchant-authored acceptance of an unpaid order or negotiated terms.
 
-A merchant does not need to send `order_accepted` after authoring a valid
-`payment_confirmed` message. Payment confirmation already communicates that the
-merchant has verified payment and the order may proceed to fulfillment.
+A merchant does not need to send another `order_accepted` after confirming a
+payment against those exact terms. That confirmation records agreement and the
+verified amount. Fulfillment still depends on the terms' funding and delivery
+requirements; a partial confirmation does not establish full payment.
+
+### `order_cancel_requested`
+
+Buyer- or merchant-authored request to cancel a specific order proposal or
+accepted order. A request does not itself cancel an accepted obligation, refund
+a payment or withdraw a shipment. It references the exact order operation.
 
 ### `order_cancelled`
 
-Buyer- or merchant-authored cancellation. The payload SHOULD state whether the
-order was unpaid, payment was rejected, fulfillment was impossible, or a refund
-is required. Cancellation does not itself prove that a refund occurred.
+Merchant-authored effective cancellation in the version 1 two-party profile.
+The payload references the exact order operation and states the reason and
+whether a refund is required. A buyer sends `order_cancel_requested`; another
+profile may define unconditional buyer cancellation with explicit agreed rules.
+Cancellation does not itself prove that a refund occurred.
 
 ### `payment_request`
 
@@ -157,9 +191,16 @@ Merchant-authored confirmation that payment was independently verified. The
 payload identifies the verified amount, denomination, rail, and the payment
 request or proof being acknowledged when available.
 
-After a valid `payment_confirmed` message, clients SHOULD present fulfillment,
-cancellation with refund, and refund actions rather than asking the merchant to
-accept the order or issue the same invoice again.
+Confirmation applies only to the exact verified amount and referenced request.
+A partial payment does not mark an entire order paid. The receiver validates the
+merchant's authority and preserves the verifier/evidence boundary; a signature
+alone does not prove rail settlement.
+
+When verified confirmations satisfy the required payable amount, clients SHOULD
+present eligible fulfillment, cancellation with refund, and refund actions.
+Partial funding remains visible with the outstanding amount. Do not ask the
+merchant to accept the same terms again or issue another invoice for an already
+paid amount. Other charges require explicitly accepted terms.
 
 ### `payment_rejected`
 
@@ -178,12 +219,18 @@ Merchant-authored confirmation that a refund was issued. The payload contains
 the refunded amount, denomination, rail, and rail-specific evidence when
 available.
 
+The merchant must have independently verified that rail outcome. A requested
+refund, outbound transfer attempt or pending transaction is not confirmation.
+A partial refund does not erase the remaining paid amount or prove that all
+funds reached the buyer. Receipt/finality requirements remain rail-specific.
+
 ### `payment_settlement`
 
-Optional advanced payment outcome for release, split, claim, or other
-multi-party settlement. Simple direct payments and refunds do not need this
-message type. Any escrow or arbitration specification using this type MUST
-define its payload and authorization requirements separately.
+Reserved design space for release, split, claim or other multiparty settlement.
+This name is NOT registered in the base version 1 schemas. Until a separate
+profile defines its exact payload and authorization, readers preserve it as
+unsupported and writers MUST NOT emit it as a base version 1 operation. Simple
+direct payments and refunds do not need this operation.
 
 ### `fulfillment_update`
 
@@ -274,6 +321,10 @@ types whose payloads are signed child events. It should not silently change the
 content shape of an existing version 1 type such as `order` or
 `payment_confirmed`.
 
+PR 10's public lifecycle, temp-key authorization and signed commitments are
+separate profiles. Adopting this base envelope does not adopt those public
+events, make an arbiter mandatory or authorize publication of private data.
+
 ## Legacy Migration
 
 Implementations migrating from the current marketplace specification SHOULD:
@@ -286,8 +337,9 @@ Implementations migrating from the current marketplace specification SHOULD:
    NIP-18 Generic Reposts use that kind;
 4. never treat every decrypted kind `17` event as a payment receipt, because
    valid NIP-25 external content reactions use that kind;
-5. write new version 1 structured commerce messages as kind `1327` after the
-   recipient ecosystem has adopted this proposal;
+5. write the new format when the intended peer explicitly supports the selected
+   version/types, or both parties explicitly select an experimental profile;
+   do not require unrelated marketplaces or the ecosystem as a whole to adopt it;
 6. preserve kind `14` for unstructured chat.
 
 Readers MAY accept legacy numeric type values during a transition. Writers MUST
@@ -296,6 +348,23 @@ use named types for kind `1327` messages.
 Implementations SHOULD record the source format locally so they do not replay a
 legacy kind `16` or `17` message as if it were a new kind `1327` message without
 explicit conversion and validation.
+
+Readers SHOULD also retain strictly validated application-specific named/JSON
+kind-16 histories behind a named adapter, such as existing Conduit records.
+An adapter retains its original provenance and unknown fields; it MUST NOT
+manufacture missing destination, payment, acceptance or fulfillment evidence.
+The same decrypted kind number is never sufficient to choose an adapter.
+
+Send one representation per logical operation. Schema/authority regressions,
+known old-peer compatibility and exact retry/recovery determine an implementer's
+rollout readiness. External adoption and review are communication tracks, not a
+universal deployment gate. Experimental kind usage remains explicitly labeled
+until the assignment and proposal are accepted upstream.
+
+Stored legacy history is not automatically rewritten or republished. Rollback
+changes future format selection, not already staged signed/encrypted bytes.
+The [implementation contract](private-commerce/v1/README.md#migration-and-rollout)
+defines identity, deduplication, deferred dependencies and compatibility states.
 
 ## Privacy And Verification
 
@@ -316,9 +385,9 @@ settled.
 Before this proposal becomes normative, implementers should agree on:
 
 - the upstream registration path for kind `1327`;
-- the exact JSON schema for each version 1 message type;
-- whether `conversation` should use a random identifier, order identifier, or a
-  deterministic trade identifier in each market lane;
+- acceptance of the concrete version 1 schemas and operation/reference rules
+  supplied with this proposal;
+- adoption of the proposed signed capability publication convention;
 - authorization rules for merchant-operated payment verifiers;
 - which optional signed child message types should be shared with the Orders
   proposal;

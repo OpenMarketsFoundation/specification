@@ -1,0 +1,159 @@
+{
+  "status": "synthetic classification examples only; independent application-schema and authority validation remain required",
+  "cases": [
+    {
+      "name": "numeric-order-with-opaque-destination",
+      "rumor": {
+        "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+        "kind": 16,
+        "tags": [
+          ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["type", "1"],
+          ["amount", "1100"],
+          [
+            "item",
+            "30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook",
+            "2"
+          ],
+          ["address", "Synthetic street\nExample City"]
+        ],
+        "content": "Synthetic purchase request"
+      },
+      "expected": {"category": "open_markets", "type": "order", "financial_effect": "none"}
+    },
+    {
+      "name": "numeric-payment-request",
+      "rumor": {
+        "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+        "kind": 16,
+        "tags": [
+          ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["type", "2"],
+          ["amount", "1100"],
+          ["payment", "lightning", "synthetic:invoice-not-payable"]
+        ],
+        "content": "Synthetic invoice request"
+      },
+      "expected": {"category": "open_markets", "type": "payment_request", "financial_effect": "none"}
+    },
+    {
+      "name": "pending-is-not-acceptance",
+      "rumor": {
+        "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+        "kind": 16,
+        "tags": [
+          ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["type", "3"],
+          ["status", "pending"]
+        ],
+        "content": ""
+      },
+      "expected": {"category": "open_markets", "type": "status_update", "financial_effect": "none"}
+    },
+    {
+      "name": "confirmed-without-verifier-is-a-statement",
+      "rumor": {
+        "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+        "kind": 16,
+        "tags": [
+          ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["type", "3"],
+          ["status", "confirmed"]
+        ],
+        "content": ""
+      },
+      "expected": {"category": "open_markets", "type": "status_update", "financial_effect": "none"}
+    },
+    {
+      "name": "numeric-shipping-update",
+      "rumor": {
+        "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+        "kind": 16,
+        "tags": [
+          ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["type", "4"],
+          ["status", "shipped"]
+        ],
+        "content": ""
+      },
+      "expected": {"category": "open_markets", "type": "shipping_update", "financial_effect": "none"}
+    },
+    {
+      "name": "buyer-receipt-is-a-proof-claim",
+      "rumor": {
+        "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+        "kind": 17,
+        "tags": [
+          ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["amount", "400"],
+          ["payment", "lightning", "synthetic:invoice-not-payable", "synthetic:not-a-preimage"]
+        ],
+        "content": ""
+      },
+      "expected": {"category": "open_markets", "type": "payment_proof", "financial_effect": "none"}
+    },
+    {
+      "name": "conduit-json-needs-its-own-schema",
+      "rumor": {
+        "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+        "kind": 16,
+        "tags": [
+          ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["type", "order"]
+        ],
+        "content": "{\"id\": \"synthetic-order\", \"buyerPubkey\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"merchantPubkey\": \"2222222222222222222222222222222222222222222222222222222222222222\", \"items\": [{\"productId\": \"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\", \"quantity\": 2, \"priceAtPurchase\": 500, \"currency\": \"SATS\"}], \"subtotal\": 1000, \"currency\": \"SATS\", \"createdAt\": 1700000000000}"
+      },
+      "expected": {"category": "application_schema_required", "type": "order", "financial_effect": "none"}
+    },
+    {
+      "name": "generic-repost-is-not-commerce",
+      "rumor": {
+        "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+        "kind": 16,
+        "tags": [["k", "1"], ["e", "3333333333333333333333333333333333333333333333333333333333333333"]],
+        "content": ""
+      },
+      "expected": {"category": "unrelated", "type": null, "financial_effect": "none"}
+    },
+    {
+      "name": "external-reaction-is-not-receipt",
+      "rumor": {
+        "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+        "kind": 17,
+        "tags": [["k", "web"], ["i", "https://example.invalid/item"]],
+        "content": "+"
+      },
+      "expected": {"category": "unrelated", "type": null, "financial_effect": "none"}
+    },
+    {
+      "name": "duplicate-type-is-malformed",
+      "rumor": {
+        "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+        "kind": 16,
+        "tags": [
+          ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+          ["subject", "synthetic-order"],
+          ["order", "synthetic-order"],
+          ["type", "1"],
+          ["type", "2"]
+        ],
+        "content": ""
+      },
+      "expected": {"category": "malformed", "type": null, "financial_effect": "none"}
+    }
+  ]
+}

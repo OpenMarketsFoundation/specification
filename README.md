@@ -24,7 +24,7 @@ Only the current e-commerce material is normative today. Future market lanes can
 
 ## Active Proposals
 
-- [Private structured commerce messages](proposals/private-structured-messages.md): replaces the colliding private order-message kinds with a versioned `kind:1327` envelope and named message types.
+- [Private structured commerce messages](proposals/private-structured-messages.md): proposes a versioned `kind:1327` envelope and named message types, with [exact v1 schemas, authority rules and synthetic fixtures](proposals/private-commerce/v1/README.md).
 - [Escrow, arbitration, and agents](proposals/escrow.md): records open design space without making custody or arbitration mandatory.
 
 ## Normative Status
