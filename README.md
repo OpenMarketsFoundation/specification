@@ -31,6 +31,12 @@ Only the current e-commerce material is normative today. Future market lanes can
 
 When there is any ambiguity, [SPEC.md](SPEC.md) controls for current compatibility.
 
+## Experimental Proposals
+
+- [Portable commerce settings](proposals/commerce-settings.md): public merchant
+  defaults and signer-encrypted private preferences, with existing protocol
+  records retaining their authority. This is a proposal, not an adopted standard.
+
 ## Prior Work
 
 This repository builds on and preserves links to the current Nostr commerce design space:
