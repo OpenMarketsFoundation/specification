@@ -99,3 +99,7 @@ The inherited text has issues that may deserve later cleanup, but this refactor 
 - minor grammar and spelling issues
 - history mentioning `expires` while current text uses `expiration`
 - lack of separate contribution and proposal workflow before this PR
+- inherited private order kind `16` conflicts with the NIP-18 Generic Repost kind
+- inherited payment receipt kind `17` conflicts with the NIP-25 external content reaction kind
+
+The experimental [private structured commerce messages proposal](../proposals/private-structured-messages.md) describes a versioned migration away from kinds `16` and `17`. It does not change the current compatibility snapshot until accepted.

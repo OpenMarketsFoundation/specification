@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "properties": {
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {"type": "string", "minLength": 1, "maxLength": 8, "pattern": "^[1-9][0-9]*$"},
+          "receive": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$"},
+            "minItems": 0,
+            "maxItems": 64,
+            "uniqueItems": true
+          },
+          "extensions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+            },
+            "minItems": 0,
+            "maxItems": 64,
+            "uniqueItems": true
+          }
+        },
+        "required": ["version", "receive"],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 16
+    },
+    "legacy_receive": {
+      "type": "array",
+      "items": {"enum": ["open_markets_16_17", "conduit_named_16"]},
+      "minItems": 0,
+      "maxItems": 2,
+      "uniqueItems": true
+    },
+    "expires_at": {"type": "integer", "minimum": 0, "maximum": 9007199254740991}
+  },
+  "required": ["versions", "expires_at"],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Experimental private commerce capability content"
+}

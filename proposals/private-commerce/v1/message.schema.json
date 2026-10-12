@@ -1,0 +1,528 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openmarketsfoundation.github.io/specification/proposals/private-commerce/v1/message.schema.json",
+  "title": "Experimental private commerce v1 decoded operation",
+  "description": "Validate {type, payload} after authenticating the NIP-59 envelope and parsing rumor.content. This is not the wire event or proof of authority/payment.",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {"type": {"const": "order"}, "payload": {"$ref": "#/$defs/order"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "order_accepted"}, "payload": {"$ref": "#/$defs/order_accepted"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "order_cancel_requested"}, "payload": {"$ref": "#/$defs/order_cancel_requested"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "order_cancelled"}, "payload": {"$ref": "#/$defs/order_cancelled"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "payment_request"}, "payload": {"$ref": "#/$defs/payment_request"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "payment_proof"}, "payload": {"$ref": "#/$defs/payment_proof"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "payment_confirmed"}, "payload": {"$ref": "#/$defs/payment_confirmed"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "payment_rejected"}, "payload": {"$ref": "#/$defs/payment_rejected"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "refund_requested"}, "payload": {"$ref": "#/$defs/refund_requested"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "refund_confirmed"}, "payload": {"$ref": "#/$defs/refund_confirmed"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "fulfillment_update"}, "payload": {"$ref": "#/$defs/fulfillment_update"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {"type": {"const": "shipping_update"}, "payload": {"$ref": "#/$defs/shipping_update"}},
+      "required": ["type", "payload"],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "operation_id": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"},
+    "pubkey": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"},
+    "money": {
+      "type": "object",
+      "properties": {
+        "value": {"type": "string", "minLength": 1, "maxLength": 96, "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$"},
+        "unit": {"type": "string", "minLength": 1, "maxLength": 12, "pattern": "^[A-Z][A-Z0-9]{2,11}$"}
+      },
+      "required": ["value", "unit"],
+      "additionalProperties": false
+    },
+    "quantity": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$",
+      "not": {"const": "0"}
+    },
+    "listing": {
+      "type": "object",
+      "properties": {
+        "coordinate": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^30402:[0-9a-f]{64}:.+$"},
+        "event_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"}
+      },
+      "required": ["coordinate", "event_id"],
+      "additionalProperties": false
+    },
+    "shipping_option": {
+      "type": "object",
+      "properties": {
+        "coordinate": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^30406:[0-9a-f]{64}:.+$"},
+        "event_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"}
+      },
+      "required": ["coordinate", "event_id"],
+      "additionalProperties": false
+    },
+    "line_quantity": {
+      "type": "object",
+      "properties": {
+        "line_id": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "quantity": {"$ref": "#/$defs/quantity"}
+      },
+      "required": ["line_id", "quantity"],
+      "additionalProperties": false
+    },
+    "item": {
+      "type": "object",
+      "properties": {
+        "line_id": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "listing": {"$ref": "#/$defs/listing"},
+        "quantity": {"$ref": "#/$defs/quantity"},
+        "unit": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[a-z][a-z0-9_]*$"},
+        "amount": {"$ref": "#/$defs/money"}
+      },
+      "required": ["line_id", "listing", "quantity", "unit", "amount"],
+      "additionalProperties": false
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "lines": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "maxLength": 200},
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "city": {"type": "string", "minLength": 1, "maxLength": 200},
+        "region": {"type": "string", "minLength": 1, "maxLength": 100},
+        "postal_code": {"type": "string", "minLength": 1, "maxLength": 40},
+        "country": {"type": "string", "minLength": 1, "maxLength": 2, "pattern": "^[A-Z]{2}$"}
+      },
+      "required": ["lines", "city", "country"],
+      "additionalProperties": false
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "email": {"type": "string", "minLength": 1, "maxLength": 320},
+        "phone": {"type": "string", "minLength": 1, "maxLength": 64}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "delivery_id": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "line_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+          "minItems": 1,
+          "maxItems": 256,
+          "uniqueItems": true
+        },
+        "method": {"enum": ["ship", "pickup", "digital", "coordinate"]},
+        "shipping_option": {"$ref": "#/$defs/shipping_option"},
+        "address": {"$ref": "#/$defs/address"},
+        "contact": {"$ref": "#/$defs/contact"}
+      },
+      "required": ["delivery_id", "line_ids", "method"],
+      "additionalProperties": false
+    },
+    "adjustment": {
+      "type": "object",
+      "properties": {
+        "adjustment_id": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "kind": {"enum": ["shipping", "tax", "handling", "discount", "other"]},
+        "direction": {"enum": ["charge", "credit"]},
+        "amount": {"$ref": "#/$defs/money"}
+      },
+      "required": ["adjustment_id", "kind", "direction", "amount"],
+      "additionalProperties": false
+    },
+    "payment_method": {
+      "type": "object",
+      "properties": {
+        "rail": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$"},
+        "reference": {"type": "string", "minLength": 1, "maxLength": 16384}
+      },
+      "required": ["rail", "reference"],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "rail": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$"},
+        "reference": {"type": "string", "minLength": 1, "maxLength": 16384},
+        "proof": {"type": "string", "minLength": 1, "maxLength": 32768}
+      },
+      "required": ["rail", "reference"],
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+      },
+      "maxProperties": 16,
+      "additionalProperties": true
+    },
+    "order": {
+      "type": "object",
+      "properties": {
+        "buyer": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"},
+        "merchant": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"},
+        "items": {"type": "array", "items": {"$ref": "#/$defs/item"}, "minItems": 1, "maxItems": 256},
+        "total": {"$ref": "#/$defs/money"},
+        "adjustments": {"type": "array", "items": {"$ref": "#/$defs/adjustment"}, "minItems": 0, "maxItems": 256},
+        "deliveries": {"type": "array", "items": {"$ref": "#/$defs/delivery"}, "minItems": 0, "maxItems": 256},
+        "supersedes": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["buyer", "merchant", "items", "total"],
+      "additionalProperties": false
+    },
+    "order_accepted": {
+      "type": "object",
+      "properties": {
+        "order_operation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["order_operation"],
+      "additionalProperties": false
+    },
+    "order_cancel_requested": {
+      "type": "object",
+      "properties": {
+        "order_operation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["order_operation", "reason"],
+      "additionalProperties": false
+    },
+    "order_cancelled": {
+      "type": "object",
+      "properties": {
+        "order_operation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "request": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$"},
+        "refund_required": {"type": "boolean"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["order_operation", "reason", "refund_required"],
+      "additionalProperties": false
+    },
+    "payment_request": {
+      "type": "object",
+      "properties": {
+        "terms": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "amount": {"$ref": "#/$defs/money"},
+        "methods": {"type": "array", "items": {"$ref": "#/$defs/payment_method"}, "minItems": 1, "maxItems": 16},
+        "expires_at": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["terms", "amount", "methods"],
+      "additionalProperties": false
+    },
+    "payment_proof": {
+      "type": "object",
+      "properties": {
+        "request": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "payment_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "amount": {"$ref": "#/$defs/money"},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["request", "payment_id", "amount", "evidence"],
+      "additionalProperties": false
+    },
+    "payment_confirmed": {
+      "type": "object",
+      "properties": {
+        "request": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "proof_operation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "payment_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "amount": {"$ref": "#/$defs/money"},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["request", "payment_id", "amount", "evidence"],
+      "additionalProperties": false
+    },
+    "payment_rejected": {
+      "type": "object",
+      "properties": {
+        "request": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "proof_operation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["request", "reason"],
+      "additionalProperties": false
+    },
+    "refund_requested": {
+      "type": "object",
+      "properties": {
+        "payment_confirmation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "amount": {"$ref": "#/$defs/money"},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["payment_confirmation", "amount", "reason"],
+      "additionalProperties": false
+    },
+    "refund_confirmed": {
+      "type": "object",
+      "properties": {
+        "payment_confirmation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "request": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "refund_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "amount": {"$ref": "#/$defs/money"},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["payment_confirmation", "refund_id", "amount", "evidence"],
+      "additionalProperties": false
+    },
+    "fulfillment_update": {
+      "type": "object",
+      "properties": {
+        "order_operation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "fulfillment_id": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "previous": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "items": {"type": "array", "items": {"$ref": "#/$defs/line_quantity"}, "minItems": 1, "maxItems": 256},
+        "state": {"enum": ["processing", "ready", "completed", "exception"]},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["order_operation", "fulfillment_id", "items", "state"],
+      "additionalProperties": false
+    },
+    "shipping_update": {
+      "type": "object",
+      "properties": {
+        "fulfillment_operation": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "previous": {"type": "string", "minLength": 1, "maxLength": 32, "pattern": "^[0-9a-f]{32}$"},
+        "state": {"enum": ["processing", "shipped", "delivered", "exception"]},
+        "carrier": {"type": "string", "minLength": 1, "maxLength": 256},
+        "tracking": {"type": "string", "minLength": 1, "maxLength": 1024},
+        "eta": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "note": {"type": "string", "maxLength": 4000},
+        "extensions": {"$ref": "#/$defs/extensions"},
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": ["fulfillment_operation", "state"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,1330 @@
+{
+  "status": "experimental synthetic schema/semantic fixtures; no signatures, encryption, real invoices or settlement",
+  "buyer": "1111111111111111111111111111111111111111111111111111111111111111",
+  "merchant": "2222222222222222222222222222222222222222222222222222222222222222",
+  "payload_cases": [
+    {
+      "name": "schema-order",
+      "message": {
+        "type": "order",
+        "payload": {
+          "buyer": "1111111111111111111111111111111111111111111111111111111111111111",
+          "merchant": "2222222222222222222222222222222222222222222222222222222222222222",
+          "items": [
+            {
+              "line_id": "00000000000000000000000000000064",
+              "listing": {
+                "coordinate": "30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook",
+                "event_id": "3333333333333333333333333333333333333333333333333333333333333333"
+              },
+              "quantity": "2",
+              "unit": "item",
+              "amount": {"value": "1000", "unit": "SAT"}
+            }
+          ],
+          "total": {"value": "1100", "unit": "SAT"},
+          "adjustments": [
+            {
+              "adjustment_id": "000000000000000000000000000000c8",
+              "kind": "shipping",
+              "direction": "charge",
+              "amount": {"value": "100", "unit": "SAT"}
+            }
+          ],
+          "deliveries": [
+            {
+              "delivery_id": "0000000000000000000000000000012c",
+              "line_ids": ["00000000000000000000000000000064"],
+              "method": "ship",
+              "shipping_option": {
+                "coordinate": "30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard",
+                "event_id": "4444444444444444444444444444444444444444444444444444444444444444"
+              },
+              "address": {"lines": ["Synthetic street"], "city": "Example City", "country": "US"}
+            }
+          ]
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-order_accepted",
+      "message": {"type": "order_accepted", "payload": {"order_operation": "00000000000000000000000000000001"}},
+      "valid": true
+    },
+    {
+      "name": "schema-order_cancel_requested",
+      "message": {
+        "type": "order_cancel_requested",
+        "payload": {"order_operation": "00000000000000000000000000000001", "reason": "buyer_changed_mind"}
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-order_cancelled",
+      "message": {
+        "type": "order_cancelled",
+        "payload": {
+          "order_operation": "00000000000000000000000000000001",
+          "reason": "merchant_unavailable",
+          "refund_required": true
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-payment_request",
+      "message": {
+        "type": "payment_request",
+        "payload": {
+          "terms": "00000000000000000000000000000001",
+          "amount": {"value": "1100", "unit": "SAT"},
+          "methods": [{"rail": "lightning", "reference": "synthetic:invoice-not-payable"}]
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-payment_proof",
+      "message": {
+        "type": "payment_proof",
+        "payload": {
+          "request": "00000000000000000000000000000003",
+          "payment_id": "synthetic-payment-1",
+          "amount": {"value": "1100", "unit": "SAT"},
+          "evidence": {
+            "rail": "lightning",
+            "reference": "synthetic:invoice-not-payable",
+            "proof": "synthetic:not-a-preimage"
+          }
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-payment_confirmed",
+      "message": {
+        "type": "payment_confirmed",
+        "payload": {
+          "request": "00000000000000000000000000000003",
+          "proof_operation": "00000000000000000000000000000004",
+          "payment_id": "synthetic-payment-1",
+          "amount": {"value": "1100", "unit": "SAT"},
+          "evidence": {"rail": "lightning", "reference": "synthetic:invoice-not-payable"}
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-payment_rejected",
+      "message": {
+        "type": "payment_rejected",
+        "payload": {
+          "request": "00000000000000000000000000000003",
+          "proof_operation": "00000000000000000000000000000004",
+          "reason": "verification_failed"
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-refund_requested",
+      "message": {
+        "type": "refund_requested",
+        "payload": {
+          "payment_confirmation": "00000000000000000000000000000005",
+          "amount": {"value": "200", "unit": "SAT"},
+          "reason": "partial_return"
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-refund_confirmed",
+      "message": {
+        "type": "refund_confirmed",
+        "payload": {
+          "payment_confirmation": "00000000000000000000000000000005",
+          "request": "00000000000000000000000000000006",
+          "refund_id": "synthetic-refund-1",
+          "amount": {"value": "200", "unit": "SAT"},
+          "evidence": {"rail": "lightning", "reference": "synthetic:refund-not-payable"}
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-fulfillment_update",
+      "message": {
+        "type": "fulfillment_update",
+        "payload": {
+          "order_operation": "00000000000000000000000000000001",
+          "fulfillment_id": "00000000000000000000000000000190",
+          "items": [{"line_id": "00000000000000000000000000000064", "quantity": "1"}],
+          "state": "ready"
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "schema-shipping_update",
+      "message": {
+        "type": "shipping_update",
+        "payload": {
+          "fulfillment_operation": "00000000000000000000000000000008",
+          "state": "shipped",
+          "carrier": "Synthetic carrier",
+          "tracking": "SYNTHETIC-TRACKING"
+        }
+      },
+      "valid": true
+    },
+    {
+      "name": "numeric-money",
+      "message": {
+        "type": "payment_request",
+        "payload": {
+          "terms": "00000000000000000000000000000001",
+          "amount": {"value": 1100, "unit": "SAT"},
+          "methods": [{"rail": "lightning", "reference": "synthetic:invoice-not-payable"}]
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "noncanonical-money",
+      "message": {
+        "type": "payment_request",
+        "payload": {
+          "terms": "00000000000000000000000000000001",
+          "amount": {"value": "01100", "unit": "SAT"},
+          "methods": [{"rail": "lightning", "reference": "synthetic:invoice-not-payable"}]
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "negative-money",
+      "message": {
+        "type": "payment_request",
+        "payload": {
+          "terms": "00000000000000000000000000000001",
+          "amount": {"value": "-1", "unit": "SAT"},
+          "methods": [{"rail": "lightning", "reference": "synthetic:invoice-not-payable"}]
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "scientific-money",
+      "message": {
+        "type": "payment_request",
+        "payload": {
+          "terms": "00000000000000000000000000000001",
+          "amount": {"value": "1.1e3", "unit": "SAT"},
+          "methods": [{"rail": "lightning", "reference": "synthetic:invoice-not-payable"}]
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "zero-quantity",
+      "message": {
+        "type": "order",
+        "payload": {
+          "buyer": "1111111111111111111111111111111111111111111111111111111111111111",
+          "merchant": "2222222222222222222222222222222222222222222222222222222222222222",
+          "items": [
+            {
+              "line_id": "00000000000000000000000000000064",
+              "listing": {
+                "coordinate": "30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook",
+                "event_id": "3333333333333333333333333333333333333333333333333333333333333333"
+              },
+              "quantity": "0",
+              "unit": "item",
+              "amount": {"value": "1000", "unit": "SAT"}
+            }
+          ],
+          "total": {"value": "1100", "unit": "SAT"},
+          "adjustments": [
+            {
+              "adjustment_id": "000000000000000000000000000000c8",
+              "kind": "shipping",
+              "direction": "charge",
+              "amount": {"value": "100", "unit": "SAT"}
+            }
+          ],
+          "deliveries": [
+            {
+              "delivery_id": "0000000000000000000000000000012c",
+              "line_ids": ["00000000000000000000000000000064"],
+              "method": "ship",
+              "shipping_option": {
+                "coordinate": "30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard",
+                "event_id": "4444444444444444444444444444444444444444444444444444444444444444"
+              },
+              "address": {"lines": ["Synthetic street"], "city": "Example City", "country": "US"}
+            }
+          ]
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "missing-reference",
+      "message": {
+        "type": "payment_confirmed",
+        "payload": {
+          "proof_operation": "00000000000000000000000000000004",
+          "payment_id": "synthetic-payment-1",
+          "amount": {"value": "1100", "unit": "SAT"},
+          "evidence": {"rail": "lightning", "reference": "synthetic:invoice-not-payable"}
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "invented-field",
+      "message": {
+        "type": "order_accepted",
+        "payload": {"order_operation": "00000000000000000000000000000001", "paid": true}
+      },
+      "valid": false
+    },
+    {
+      "name": "generic-financial-status",
+      "message": {
+        "type": "fulfillment_update",
+        "payload": {
+          "order_operation": "00000000000000000000000000000001",
+          "fulfillment_id": "00000000000000000000000000000190",
+          "items": [{"line_id": "00000000000000000000000000000064", "quantity": "1"}],
+          "state": "paid"
+        }
+      },
+      "valid": false
+    },
+    {
+      "name": "missing-cancellation-outcome",
+      "message": {
+        "type": "order_cancelled",
+        "payload": {"order_operation": "00000000000000000000000000000001", "reason": "merchant_unavailable"}
+      },
+      "valid": false
+    }
+  ],
+  "sequence_cases": [
+    {
+      "name": "purchase-partial-refund-and-fulfillment",
+      "messages": ["m001", "m002", "m003", "m004", "m005", "m006", "m007", "m008", "m009"],
+      "expected": [
+        "accepted",
+        "accepted",
+        "accepted",
+        "accepted",
+        "accepted",
+        "accepted",
+        "accepted",
+        "accepted",
+        "accepted"
+      ],
+      "verified_operations": ["00000000000000000000000000000005", "00000000000000000000000000000007"],
+      "supported_extensions": []
+    },
+    {
+      "name": "proof-does-not-confirm-payment",
+      "messages": ["m001", "m002", "m003", "m004"],
+      "expected": ["accepted", "accepted", "accepted", "accepted"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "confirmation-without-verification",
+      "messages": ["m001", "m002", "m003", "m004", "m005", "m006"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "deferred", "deferred"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "late-dependency-is-recoverable",
+      "messages": ["m003", "m001", "m003"],
+      "expected": ["deferred", "accepted", "accepted"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "duplicate-inner-message",
+      "messages": ["m001", "m001"],
+      "expected": ["accepted", "duplicate"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "same-operation-conflicting-terms",
+      "messages": ["m001", "m010"],
+      "expected": ["accepted", "conflict"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "wrong-confirmation-author",
+      "messages": ["m001", "m002", "m003", "m004", "m011"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "rejected"],
+      "verified_operations": ["00000000000000000000000000000005"],
+      "supported_extensions": []
+    },
+    {
+      "name": "unknown-type",
+      "messages": ["m012"],
+      "expected": ["unsupported"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "unknown-version",
+      "messages": ["m013"],
+      "expected": ["unsupported"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "unknown-required-extension",
+      "messages": ["m014"],
+      "expected": ["unsupported"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "noncritical-extension",
+      "messages": ["m015"],
+      "expected": ["accepted"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "missing-required-extension",
+      "messages": ["m016"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "order-total-mismatch",
+      "messages": ["m017"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "cross-merchant-listing",
+      "messages": ["m018"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "partial-payment-not-full",
+      "messages": ["m001", "m002", "m003", "m019", "m020"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "accepted"],
+      "verified_operations": ["00000000000000000000000000000005"],
+      "supported_extensions": []
+    },
+    {
+      "name": "overpayment-confirmation",
+      "messages": ["m001", "m002", "m003", "m004", "m021"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "rejected"],
+      "verified_operations": ["00000000000000000000000000000005"],
+      "supported_extensions": []
+    },
+    {
+      "name": "over-refund",
+      "messages": ["m001", "m002", "m003", "m004", "m005", "m022"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "accepted", "rejected"],
+      "verified_operations": ["00000000000000000000000000000005", "00000000000000000000000000000007"],
+      "supported_extensions": []
+    },
+    {
+      "name": "partial-fulfillment",
+      "messages": ["m001", "m002", "m008"],
+      "expected": ["accepted", "accepted", "accepted"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "over-fulfillment",
+      "messages": ["m001", "m002", "m023"],
+      "expected": ["accepted", "accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "cross-order-reference",
+      "messages": ["m001", "m024"],
+      "expected": ["accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "buyer-request-not-effective-cancellation",
+      "messages": ["m001", "m002", "m025"],
+      "expected": ["accepted", "accepted", "accepted"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "buyer-effective-cancellation-rejected",
+      "messages": ["m001", "m002", "m026"],
+      "expected": ["accepted", "accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "known-required-extension",
+      "messages": ["m014"],
+      "expected": ["accepted"],
+      "verified_operations": [],
+      "supported_extensions": ["example:terms"]
+    },
+    {
+      "name": "same-payment-new-operation-no-double-credit",
+      "messages": ["m001", "m002", "m003", "m004", "m005", "m027"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "accepted", "duplicate"],
+      "verified_operations": ["00000000000000000000000000000005", "0000000000000000000000000000000a"],
+      "supported_extensions": []
+    },
+    {
+      "name": "same-refund-new-operation-no-double-debit",
+      "messages": ["m001", "m002", "m003", "m004", "m005", "m006", "m007", "m028"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "accepted", "accepted", "accepted", "duplicate"],
+      "verified_operations": [
+        "00000000000000000000000000000005",
+        "00000000000000000000000000000007",
+        "0000000000000000000000000000000a"
+      ],
+      "supported_extensions": []
+    },
+    {
+      "name": "wrong-payment-denomination",
+      "messages": ["m001", "m002", "m003", "m029"],
+      "expected": ["accepted", "accepted", "accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "wrong-invoice-reference",
+      "messages": ["m001", "m002", "m003", "m030"],
+      "expected": ["accepted", "accepted", "accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "proof-alone-cannot-authorize-fulfillment",
+      "messages": ["m001", "m003", "m004", "m008"],
+      "expected": ["accepted", "accepted", "accepted", "deferred"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "duplicate-line-identity",
+      "messages": ["m031"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "fractional-item-quantity",
+      "messages": ["m032"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "fractional-satoshi",
+      "messages": ["m033"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "same-fulfillment-group-no-double-allocation",
+      "messages": ["m001", "m002", "m008", "m034"],
+      "expected": ["accepted", "accepted", "accepted", "accepted"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "completed-fulfillment-cannot-regress",
+      "messages": ["m001", "m002", "m008", "m034", "m035"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "fulfillment-update-needs-causality",
+      "messages": ["m001", "m002", "m008", "m036"],
+      "expected": ["accepted", "accepted", "accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "malformed-required-extension",
+      "messages": ["m037"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": ["example:terms"]
+    },
+    {
+      "name": "self-reference-is-not-a-missing-dependency",
+      "messages": ["m001", "m038"],
+      "expected": ["accepted", "rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "fulfillment-fork-is-not-last-write-wins",
+      "messages": ["m001", "m002", "m008", "m034", "m039"],
+      "expected": ["accepted", "accepted", "accepted", "accepted", "conflict"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "unimplemented-quantity-profile",
+      "messages": ["m040"],
+      "expected": ["unsupported"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "large-money-keeps-exact-precision",
+      "messages": ["m041"],
+      "expected": ["accepted"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "duplicate-type-tag",
+      "messages": ["m042"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "unsigned-rumor-required",
+      "messages": ["m043"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    },
+    {
+      "name": "tampered-rumor-hash",
+      "messages": ["m044"],
+      "expected": ["rejected"],
+      "verified_operations": [],
+      "supported_extensions": []
+    }
+  ],
+  "capability_cases": [
+    {
+      "name": "v1-receive",
+      "content": {
+        "versions": [
+          {
+            "version": "1",
+            "receive": [
+              "order",
+              "order_accepted",
+              "order_cancel_requested",
+              "order_cancelled",
+              "payment_request",
+              "payment_proof",
+              "payment_confirmed",
+              "payment_rejected",
+              "refund_requested",
+              "refund_confirmed",
+              "fulfillment_update",
+              "shipping_update"
+            ]
+          }
+        ],
+        "legacy_receive": ["open_markets_16_17", "conduit_named_16"],
+        "expires_at": 1900000000
+      },
+      "valid": true
+    },
+    {
+      "name": "future-capability-version-is-preserved",
+      "content": {"versions": [{"version": "2", "receive": ["order"]}], "expires_at": 1900000000},
+      "valid": true
+    },
+    {
+      "name": "explicit-no-new-format",
+      "content": {"versions": [], "legacy_receive": ["conduit_named_16"], "expires_at": 1900000000},
+      "valid": true
+    }
+  ],
+  "messages": {
+    "m001": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000001,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000001"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "1656f9b11509b9679b74ff2954f75fd22cd248be19c67423d9a2c8b9835ae084"
+    },
+    "m002": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000002,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000002"],
+        ["type", "order_accepted"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\"}",
+      "id": "04335c5dc2d168dae84999a8b74820096d1d606fc1209f05c788c25b0a5a0977"
+    },
+    "m003": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000003,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000003"],
+        ["type", "payment_request"],
+        ["version", "1"]
+      ],
+      "content": "{\"terms\":\"00000000000000000000000000000001\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"methods\":[{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}]}",
+      "id": "4915711d16725d77b4cd61713486781a2387500bd1346c6546759051ab380166"
+    },
+    "m004": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000004,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000004"],
+        ["type", "payment_proof"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\",\"proof\":\"synthetic:not-a-preimage\"}}",
+      "id": "5e1ddfa79f9b4976dbc2251bc69367ff3c366e86bc1019beb0e5aaea92565458"
+    },
+    "m005": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000005,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000005"],
+        ["type", "payment_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"proof_operation\":\"00000000000000000000000000000004\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}}",
+      "id": "eb614f27c7135c8066fc363cd2b22cbeb4bc63d98f1f200736661adbddc4ea8f"
+    },
+    "m006": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000006,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000006"],
+        ["type", "refund_requested"],
+        ["version", "1"]
+      ],
+      "content": "{\"payment_confirmation\":\"00000000000000000000000000000005\",\"amount\":{\"value\":\"200\",\"unit\":\"SAT\"},\"reason\":\"partial_return\"}",
+      "id": "9e1adb2ff0dfcb45bcfb5c2d980aca939497a0ed2ad13af79934758af61e1e88"
+    },
+    "m007": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000007,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000007"],
+        ["type", "refund_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"payment_confirmation\":\"00000000000000000000000000000005\",\"request\":\"00000000000000000000000000000006\",\"refund_id\":\"synthetic-refund-1\",\"amount\":{\"value\":\"200\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:refund-not-payable\"}}",
+      "id": "a7c11c2255a0dbf608312ae6d89c918182da705f298d8088e99da28aee6a69d7"
+    },
+    "m008": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000008,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000008"],
+        ["type", "fulfillment_update"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"fulfillment_id\":\"00000000000000000000000000000190\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"quantity\":\"1\"}],\"state\":\"ready\"}",
+      "id": "6df1dc62c098bb2856a7b07fcebcb1a1d76fb347cc97b96896c6606c43662498"
+    },
+    "m009": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000009,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000009"],
+        ["type", "shipping_update"],
+        ["version", "1"]
+      ],
+      "content": "{\"fulfillment_operation\":\"00000000000000000000000000000008\",\"state\":\"shipped\",\"carrier\":\"Synthetic carrier\",\"tracking\":\"SYNTHETIC-TRACKING\"}",
+      "id": "c96e2970a22c9d00cd1d87d938a403d68b45690b58c94cf4e021f90445f9b206"
+    },
+    "m010": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000001,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000001"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}],\"note\":\"changed\"}",
+      "id": "5ea00aca31c2bb50a6ffd703fdb49ec3d646456d006b7f706f915bd520d9e015"
+    },
+    "m011": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000005,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000005"],
+        ["type", "payment_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"proof_operation\":\"00000000000000000000000000000004\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}}",
+      "id": "76ec1943bb7ba07dcd8dafec362dfd88c025e53c6577a39643dcf324f962043d"
+    },
+    "m012": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "future_operation"],
+        ["version", "1"]
+      ],
+      "content": "{}",
+      "id": "7847ce671984ea332033ffbb08ad6b7fc2bad77d96486545e6b2598686e9a1eb"
+    },
+    "m013": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "2"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "52d06b2dcc648265ebb03d2a09d3a7f91d0413e4e3988c1ee7dccd50b21e3683"
+    },
+    "m014": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}],\"extensions\":{\"example:terms\":{\"x\":1}},\"requires\":[\"example:terms\"]}",
+      "id": "73604a3c6c58c82c323eeeaae98a480c989999a7f3c1e813d390c0f78fec7c52"
+    },
+    "m015": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}],\"extensions\":{\"example:display\":{\"x\":1}}}",
+      "id": "4bf67fb876d63d359d5c718c5cff4208faa0102ee0440beb0869f18e5cec7e93"
+    },
+    "m016": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}],\"requires\":[\"example:terms\"]}",
+      "id": "97fe666e58fc953693c2e83ff703a95a13a408ce3dce4baf3c4cc4907eaa5f2a"
+    },
+    "m017": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "8fe715d737198ad0347aaa3855777830e401de7e263d087b1b8350fcccdaa72f"
+    },
+    "m018": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:1111111111111111111111111111111111111111111111111111111111111111:wrong\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "04db0e779be5221ee3c7d4e7d8e8679705e62f667daf9f1b67210cfe7fd6062b"
+    },
+    "m019": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000004,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000004"],
+        ["type", "payment_proof"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"400\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\",\"proof\":\"synthetic:not-a-preimage\"}}",
+      "id": "905b0e294206f0decb555583bed6bbfebfbc7d9978b7c008b9e4ab759676e201"
+    },
+    "m020": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000005,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000005"],
+        ["type", "payment_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"proof_operation\":\"00000000000000000000000000000004\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"400\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}}",
+      "id": "acc9c20d7c4f5f55ad277380d43954426f0f3883ea7c5f54d4f49d2ee31d4b8b"
+    },
+    "m021": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000005,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000005"],
+        ["type", "payment_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"proof_operation\":\"00000000000000000000000000000004\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"1101\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}}",
+      "id": "50a26131b9f1af4c636490c0b9f33c2819589c57eb13062f6d25cb634c6af355"
+    },
+    "m022": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000007,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000007"],
+        ["type", "refund_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"payment_confirmation\":\"00000000000000000000000000000005\",\"request\":\"00000000000000000000000000000006\",\"refund_id\":\"synthetic-refund-1\",\"amount\":{\"value\":\"1101\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:refund-not-payable\"}}",
+      "id": "8b3922a27ee0d11dae23bd410d5699241b0c4e92dc24e9dbc2c2a3af4744c2f6"
+    },
+    "m023": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000008,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000008"],
+        ["type", "fulfillment_update"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"fulfillment_id\":\"00000000000000000000000000000190\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"quantity\":\"3\"}],\"state\":\"ready\"}",
+      "id": "8b715313b45ed1134db4952e6d9f996cc4c17df4d91af7e6c6d5e19c73e93e16"
+    },
+    "m024": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000003,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "different-order"],
+        ["operation", "00000000000000000000000000000003"],
+        ["type", "payment_request"],
+        ["version", "1"]
+      ],
+      "content": "{\"terms\":\"00000000000000000000000000000001\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"methods\":[{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}]}",
+      "id": "bcc5af1fed79e8c79762304651cfc7dec562b2a87415303e1f212c334c28ead7"
+    },
+    "m025": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order_cancel_requested"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"reason\":\"buyer_changed_mind\"}",
+      "id": "68225bf41a2a212f3ae18e971fbdc87b33617cc7327d04eec695c581ee1eaa8d"
+    },
+    "m026": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order_cancelled"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"reason\":\"merchant_unavailable\",\"refund_required\":true}",
+      "id": "5823cdf58488ec06bcc438ebba22a58b3bcbab1ddee9f06f5efa9f20ae9a2afd"
+    },
+    "m027": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "payment_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"proof_operation\":\"00000000000000000000000000000004\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}}",
+      "id": "8195dd5b6ba30ce106d0aa4417b79311b7fc386a2edf74f7138d34127c62fb1f"
+    },
+    "m028": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "refund_confirmed"],
+        ["version", "1"]
+      ],
+      "content": "{\"payment_confirmation\":\"00000000000000000000000000000005\",\"request\":\"00000000000000000000000000000006\",\"refund_id\":\"synthetic-refund-1\",\"amount\":{\"value\":\"200\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:refund-not-payable\"}}",
+      "id": "d87895a5c08730a2d9c60ece0ef33821cdca8369310b9d1b80527069ee7153ed"
+    },
+    "m029": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000004,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000004"],
+        ["type", "payment_proof"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"1100\",\"unit\":\"USD\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\",\"proof\":\"synthetic:not-a-preimage\"}}",
+      "id": "a1dbddeb0d9c8e4ff3c57b63a201575e3bece8873e8d8e888fc49cc0b2651fdd"
+    },
+    "m030": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000004,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000004"],
+        ["type", "payment_proof"],
+        ["version", "1"]
+      ],
+      "content": "{\"request\":\"00000000000000000000000000000003\",\"payment_id\":\"synthetic-payment-1\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"evidence\":{\"rail\":\"lightning\",\"reference\":\"synthetic:other-invoice\"}}",
+      "id": "8c30b557f68a91132eeed999dd91b93af63249b17021c7aae77722c9cb2c5da7"
+    },
+    "m031": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}},{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"2100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "008412b0436991ae12cec0e5d378b3c5ecb127335b95c44115b515cdc36ad6fa"
+    },
+    "m032": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"0.5\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "9e3ee4b0c548dc828829fb1e08c9f14043cd71011a1f070f52c03f0d6a776cd9"
+    },
+    "m033": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000.5\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100.5\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "0d189f4d0f5cb5ce335ba85455b59b0557907354dd2e8f0ae8ed6b83c02e92f1"
+    },
+    "m034": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "fulfillment_update"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"fulfillment_id\":\"00000000000000000000000000000190\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"quantity\":\"1\"}],\"state\":\"completed\",\"previous\":\"00000000000000000000000000000008\"}",
+      "id": "2e5187b94af0360168d33372b6792a2becc48f7d349b6ba3fcc3cece6928a250"
+    },
+    "m035": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000011,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000b"],
+        ["type", "fulfillment_update"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"fulfillment_id\":\"00000000000000000000000000000190\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"quantity\":\"1\"}],\"state\":\"processing\",\"previous\":\"0000000000000000000000000000000a\"}",
+      "id": "4b97850594077e73520209a87cee20ad136569dc07a5c195d52a09aba15a83d8"
+    },
+    "m036": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "fulfillment_update"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"fulfillment_id\":\"00000000000000000000000000000190\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"quantity\":\"1\"}],\"state\":\"completed\"}",
+      "id": "1c2e0ca9be1f0336db4dfea562bb1ebf25505ee8ba0001ac9353b2589c849154"
+    },
+    "m037": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}],\"extensions\":{\"example:terms\":{\"x\":2}},\"requires\":[\"example:terms\"]}",
+      "id": "ee08011543dbe3635415534eae080a6644c102b3a6fb4b47def0dfae11340d58"
+    },
+    "m038": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "payment_request"],
+        ["version", "1"]
+      ],
+      "content": "{\"terms\":\"0000000000000000000000000000000a\",\"amount\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"methods\":[{\"rail\":\"lightning\",\"reference\":\"synthetic:invoice-not-payable\"}]}",
+      "id": "6dc1181674b6e1574de2babf91c9e16f8a5e5591d8348e4f77d2fd9d109cea7f"
+    },
+    "m039": {
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1700000011,
+      "kind": 1327,
+      "tags": [
+        ["p", "1111111111111111111111111111111111111111111111111111111111111111"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000b"],
+        ["type", "fulfillment_update"],
+        ["version", "1"]
+      ],
+      "content": "{\"order_operation\":\"00000000000000000000000000000001\",\"fulfillment_id\":\"00000000000000000000000000000190\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"quantity\":\"1\"}],\"state\":\"exception\",\"previous\":\"00000000000000000000000000000008\"}",
+      "id": "ad7e4dd4cab896da018ddac0fa8f5f76506be70423be0d18154937e44a1b47fa"
+    },
+    "m040": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"hour\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "1f14e26f78120c5c89e25e569e55bddff75c175939e4871a260789afb2a1d815"
+    },
+    "m041": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000010,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "0000000000000000000000000000000a"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"12345678901234567890123456789012345678901234567890\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"12345678901234567890123456789012345678901234567890\",\"unit\":\"SAT\"},\"adjustments\":[],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "2adcda1f538f880f55069f9506a96dadf12afc6922aa2bc7922a20765d388670"
+    },
+    "m042": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000001,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000001"],
+        ["type", "order"],
+        ["version", "1"],
+        ["type", "order"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "1656f9b11509b9679b74ff2954f75fd22cd248be19c67423d9a2c8b9835ae084"
+    },
+    "m043": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000001,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000001"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]}",
+      "id": "1656f9b11509b9679b74ff2954f75fd22cd248be19c67423d9a2c8b9835ae084",
+      "sig": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "m044": {
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1700000001,
+      "kind": 1327,
+      "tags": [
+        ["p", "2222222222222222222222222222222222222222222222222222222222222222"],
+        ["conversation", "synthetic-conversation"],
+        ["order", "synthetic-order"],
+        ["operation", "00000000000000000000000000000001"],
+        ["type", "order"],
+        ["version", "1"]
+      ],
+      "content": "{\"buyer\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"merchant\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"items\":[{\"line_id\":\"00000000000000000000000000000064\",\"listing\":{\"coordinate\":\"30402:2222222222222222222222222222222222222222222222222222222222222222:synthetic-notebook\",\"event_id\":\"3333333333333333333333333333333333333333333333333333333333333333\"},\"quantity\":\"2\",\"unit\":\"item\",\"amount\":{\"value\":\"1000\",\"unit\":\"SAT\"}}],\"total\":{\"value\":\"1100\",\"unit\":\"SAT\"},\"adjustments\":[{\"adjustment_id\":\"000000000000000000000000000000c8\",\"kind\":\"shipping\",\"direction\":\"charge\",\"amount\":{\"value\":\"100\",\"unit\":\"SAT\"}}],\"deliveries\":[{\"delivery_id\":\"0000000000000000000000000000012c\",\"line_ids\":[\"00000000000000000000000000000064\"],\"method\":\"ship\",\"shipping_option\":{\"coordinate\":\"30406:2222222222222222222222222222222222222222222222222222222222222222:synthetic-standard\",\"event_id\":\"4444444444444444444444444444444444444444444444444444444444444444\"},\"address\":{\"lines\":[\"Synthetic street\"],\"city\":\"Example City\",\"country\":\"US\"}}]} ",
+      "id": "1656f9b11509b9679b74ff2954f75fd22cd248be19c67423d9a2c8b9835ae084"
+    }
+  }
+}
