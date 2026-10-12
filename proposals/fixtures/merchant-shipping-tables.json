@@ -1,0 +1,675 @@
+{
+  "description": "Illustrative calculation vectors. Item subtotalMinor is the full quantity-aware agreed merchandise value; subtotalMinor and handlingMinor inputs are already in policy currency. Canonical destination inputs and status labels are fixture conventions, not a client API or exchange-rate contract.",
+  "policies": {
+    "standard": {
+      "version": 1,
+      "originCountry": "US",
+      "currency": "USD",
+      "domestic": {
+        "rules": [
+          {
+            "country": "US",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 600
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 900
+              }
+            ]
+          },
+          {
+            "country": "US",
+            "subdivision": "US-AK",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1200
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 1800
+              }
+            ]
+          }
+        ],
+        "freeShippingThresholdMinor": 7500
+      },
+      "international": {
+        "rules": [
+          {
+            "country": "CA",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1800
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 2500
+              }
+            ]
+          }
+        ],
+        "freeShippingThresholdMinor": 15000
+      }
+    },
+    "postal": {
+      "version": 1,
+      "originCountry": "US",
+      "currency": "USD",
+      "domestic": {
+        "rules": [
+          {
+            "country": "US",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 600
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 900
+              }
+            ]
+          },
+          {
+            "country": "US",
+            "subdivision": "US-AK",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1200
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 1800
+              }
+            ]
+          },
+          {
+            "country": "US",
+            "postalPrefix": "94",
+            "bands": [
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 1000
+              }
+            ]
+          },
+          {
+            "country": "US",
+            "postalPrefix": "941",
+            "bands": [
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 1100
+              }
+            ]
+          },
+          {
+            "country": "US",
+            "subdivision": "US-CA",
+            "postalPrefix": "941",
+            "bands": [
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 1300
+              }
+            ]
+          }
+        ],
+        "freeShippingThresholdMinor": 7500
+      },
+      "international": {
+        "rules": [
+          {
+            "country": "CA",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1800
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 2500
+              }
+            ]
+          }
+        ],
+        "freeShippingThresholdMinor": 15000
+      }
+    },
+    "zeroThreshold": {
+      "version": 1,
+      "originCountry": "US",
+      "currency": "USD",
+      "domestic": {
+        "rules": [
+          {
+            "country": "US",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 600
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 900
+              }
+            ]
+          },
+          {
+            "country": "US",
+            "subdivision": "US-AK",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1200
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 1800
+              }
+            ]
+          }
+        ],
+        "freeShippingThresholdMinor": 0
+      },
+      "international": {
+        "rules": [
+          {
+            "country": "CA",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1800
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 2500
+              }
+            ]
+          }
+        ],
+        "freeShippingThresholdMinor": 15000
+      }
+    },
+    "noThreshold": {
+      "version": 1,
+      "originCountry": "US",
+      "currency": "USD",
+      "domestic": {
+        "rules": [
+          {
+            "country": "US",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 600
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 900
+              }
+            ]
+          },
+          {
+            "country": "US",
+            "subdivision": "US-AK",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1200
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 1800
+              }
+            ]
+          }
+        ]
+      },
+      "international": {
+        "rules": [
+          {
+            "country": "CA",
+            "bands": [
+              {
+                "maxWeightGrams": 1000,
+                "priceMinor": 1800
+              },
+              {
+                "maxWeightGrams": 2000,
+                "priceMinor": 2500
+              }
+            ]
+          }
+        ],
+        "freeShippingThresholdMinor": 15000
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "combined-weight-inclusive-band",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 4000,
+        "bandPriceMinor": 600,
+        "handlingMinor": 200,
+        "freeShippingApplied": false,
+        "amountMinor": 800
+      }
+    },
+    {
+      "id": "next-band-one-gram-over",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 901,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 1,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1001,
+        "qualifyingSubtotalMinor": 4000,
+        "bandPriceMinor": 900,
+        "handlingMinor": 100,
+        "freeShippingApplied": false,
+        "amountMinor": 1000
+      }
+    },
+    {
+      "id": "domestic-threshold-waives-handling",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 7500,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 7500,
+        "bandPriceMinor": 600,
+        "handlingMinor": 200,
+        "freeShippingApplied": true,
+        "amountMinor": 0
+      }
+    },
+    {
+      "id": "domestic-one-cent-below-threshold",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 7499,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 7499,
+        "bandPriceMinor": 600,
+        "handlingMinor": 200,
+        "freeShippingApplied": false,
+        "amountMinor": 800
+      }
+    },
+    {
+      "id": "subdivision-price-override",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-AK"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 4000,
+        "bandPriceMinor": 1200,
+        "handlingMinor": 200,
+        "freeShippingApplied": false,
+        "amountMinor": 1400
+      }
+    },
+    {
+      "id": "international-separate-threshold",
+      "policy": "standard",
+      "destination": {
+        "country": "CA",
+        "subdivision": "CA-ON"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 10000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 10000,
+        "bandPriceMinor": 1800,
+        "handlingMinor": 200,
+        "freeShippingApplied": false,
+        "amountMinor": 2000
+      }
+    },
+    {
+      "id": "international-at-threshold",
+      "policy": "standard",
+      "destination": {
+        "country": "CA",
+        "subdivision": "CA-ON"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 15000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 15000,
+        "bandPriceMinor": 1800,
+        "handlingMinor": 200,
+        "freeShippingApplied": true,
+        "amountMinor": 0
+      }
+    },
+    {
+      "id": "overweight-even-above-threshold",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 2400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 1,
+          "subtotalMinor": 10000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "overweight"
+      }
+    },
+    {
+      "id": "unsupported-country-even-above-threshold",
+      "policy": "standard",
+      "destination": {
+        "country": "GB",
+        "subdivision": "GB-ENG"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 20000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "unsupported_destination"
+      }
+    },
+    {
+      "id": "missing-required-weight",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": null,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "missing_weight"
+      }
+    },
+    {
+      "id": "digital-and-pickup-do-not-help-threshold",
+      "policy": "standard",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        },
+        {
+          "weightGrams": 10000,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 100000,
+          "fulfillment": "digital"
+        },
+        {
+          "weightGrams": 10000,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 100000,
+          "fulfillment": "pickup"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 4000,
+        "bandPriceMinor": 600,
+        "handlingMinor": 200,
+        "freeShippingApplied": false,
+        "amountMinor": 800
+      }
+    },
+    {
+      "id": "missing-subdivision-cannot-select-country-fallback",
+      "policy": "standard",
+      "destination": {
+        "country": "US"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "destination_incomplete"
+      }
+    },
+    {
+      "id": "longest-prefix-then-subdivision",
+      "policy": "postal",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-CA",
+        "postalCode": "94107"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 4000,
+        "bandPriceMinor": 1300,
+        "handlingMinor": 200,
+        "freeShippingApplied": false,
+        "amountMinor": 1500
+      }
+    },
+    {
+      "id": "missing-postal-cannot-select-country-fallback",
+      "policy": "postal",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-CA"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "destination_incomplete"
+      }
+    },
+    {
+      "id": "zero-threshold-free-eligible-bundle",
+      "policy": "zeroThreshold",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 4000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 4000,
+        "bandPriceMinor": 600,
+        "handlingMinor": 200,
+        "freeShippingApplied": true,
+        "amountMinor": 0
+      }
+    },
+    {
+      "id": "absent-threshold-does-not-waive-charge",
+      "policy": "noThreshold",
+      "destination": {
+        "country": "US",
+        "subdivision": "US-NY"
+      },
+      "items": [
+        {
+          "weightGrams": 400,
+          "weightAllowanceGrams": 100,
+          "handlingMinor": 100,
+          "quantity": 2,
+          "subtotalMinor": 10000,
+          "fulfillment": "shipping"
+        }
+      ],
+      "expected": {
+        "status": "quoted",
+        "combinedWeightGrams": 1000,
+        "qualifyingSubtotalMinor": 10000,
+        "bandPriceMinor": 600,
+        "handlingMinor": 200,
+        "freeShippingApplied": false,
+        "amountMinor": 800
+      }
+    }
+  ]
+}
