@@ -44,6 +44,13 @@ This repository builds on and preserves links to the current Nostr commerce desi
 - [Pontmore PIP-00 agent definition](https://github.com/pontmore/protocol/blob/main/PIP-00-agent-definition.md)
 - [Switchboard escrow architecture](https://github.com/samuelralak/switchboard/blob/master/docs/escrow-architecture.md)
 
+## Active Proposals
+
+- [Product Modifiers and Variation Details](proposals/modifiers.md) proposes
+  modifier groups (`select` on a `kind:30405`, `modifier_group` on a product) and an
+  order-line link, and states three readings of the `variable` / `variation`
+  text where it is silent.
+
 ## Contributing
 
 Read [AGENTS.md](AGENTS.md) before making structural or semantic changes. Structural PRs should preserve implementation-sensitive text and keep semantic changes in separate, explicit proposals.
