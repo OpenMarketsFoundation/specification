@@ -4,6 +4,8 @@ Status: normative transposition of current order communication material.
 
 This file copies the implementation-sensitive order sections from [../SPEC.md](../SPEC.md). Payment request, payment receipt, and shipping update details are also represented in the payment and delivery pillars for navigation, but the canonical contiguous context remains [../SPEC.md](../SPEC.md).
 
+Experimental proposal: [Takeout: Pickup Orders on the Private Commerce Envelope](../proposals/takeout.md). This proposal is not current normative behavior.
+
 ## 4. Order Communication Flow and Payment Processing
 
 Order processing and status updates use [NIP-17](17.md) encrypted direct messages, with three event kinds serving different purposes:

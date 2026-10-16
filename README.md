@@ -44,6 +44,13 @@ This repository builds on and preserves links to the current Nostr commerce desi
 - [Pontmore PIP-00 agent definition](https://github.com/pontmore/protocol/blob/main/PIP-00-agent-definition.md)
 - [Switchboard escrow architecture](https://github.com/samuelralak/switchboard/blob/master/docs/escrow-architecture.md)
 
+## Active Proposals
+
+- [Takeout: Pickup Orders on the Private Commerce Envelope](proposals/takeout.md)
+  proposes one `openmarkets:takeout` extension entry: a requested pickup time on
+  the order, a ready time and counter code on the acceptance, and the unavailable
+  lines on a stock decline.
+
 ## Contributing
 
 Read [AGENTS.md](AGENTS.md) before making structural or semantic changes. Structural PRs should preserve implementation-sensitive text and keep semantic changes in separate, explicit proposals.
