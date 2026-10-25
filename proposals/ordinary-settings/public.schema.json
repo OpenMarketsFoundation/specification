@@ -279,8 +279,8 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "maxLength": 64,
-                "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$"
+                "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$",
+                "maxLength": 64
               }
             },
             "notice": {
@@ -304,8 +304,8 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "maxLength": 512,
-                  "pattern": "^30406:[0-9a-f]{64}:.+$"
+                  "pattern": "^30406:[0-9a-f]{64}:.+$",
+                  "maxLength": 512
                 },
                 {
                   "type": "null"
@@ -344,7 +344,8 @@
           "data"
         ],
         "additionalProperties": {}
-      }
+      },
+      "maxProperties": 16
     }
   },
   "required": [
@@ -384,6 +385,90 @@
           }
         }
       ]
+    },
+    "bounded": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "maxLength": 4096,
+          "not": {
+            "const": "openmarkets.private-settings"
+          }
+        },
+        {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/bounded"
+          }
+        },
+        {
+          "type": "object",
+          "maxProperties": 128,
+          "propertyNames": {
+            "maxLength": 128,
+            "not": {
+              "enum": [
+                "__proto__",
+                "prototype",
+                "constructor",
+                "visibility",
+                "mnemonic",
+                "seed",
+                "nsec",
+                "privateKey",
+                "walletId",
+                "wallets",
+                "walletRecords",
+                "recovery",
+                "defaultWalletId",
+                "paySelectedAt",
+                "receiveSelectedAt",
+                "credentials",
+                "nwcUri",
+                "rates",
+                "countries",
+                "restrictTo",
+                "exclude",
+                "originCountry",
+                "price",
+                "weightBands",
+                "display",
+                "appearance",
+                "notifications",
+                "working",
+                "payments",
+                "savedAddresses",
+                "defaultAddressId",
+                "recipientName",
+                "addressLine1",
+                "addressLine2",
+                "postalCode",
+                "email",
+                "phone",
+                "preferredMethod"
+              ]
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/bounded"
+          }
+        }
+      ]
     }
-  }
+  },
+  "allOf": [
+    {
+      "$ref": "#/$defs/bounded"
+    }
+  ]
 }

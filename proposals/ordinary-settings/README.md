@@ -49,12 +49,12 @@ are outside these documents.
 
 ## Fields and defaults
 
-The adjacent JSON schemas define field shapes and limits. Length limits count
+The adjacent JSON schemas define field shapes, recursive ownership exclusions, and structural limits. Parsers additionally enforce byte budgets, nesting depth, duplicate-key rejection, registry validity, address-pointer integrity, chronological hours, and same-owner policy references. Length limits count
 Unicode code points. Currency is `BTC` or an uppercase ISO 4217 code; country is
 an assigned uppercase ISO 3166-1 alpha-2 code. Language and locale use BCP-47.
 Timezones use IANA names. Clients validate those registries, not only spelling.
 
-- `display`: currency (default USD), bitcoinUnit (`bitcoin`/`sats`, default
+- `display`: currency (default BTC), bitcoinUnit (`bitcoin`/`sats`, default
   bitcoin), language and locale (default device). Prices retain their signed units.
 - `appearance`: theme (`system`, `day-market`, `night-market`; default system),
   optional reducedMotion boolean. System resolves locally, never writes back.
@@ -65,7 +65,7 @@ Timezones use IANA names. Clients validate those registries, not only spelling.
   quietHours with start/end local HH:MM and timezone. Equal endpoints disable
   quiet hours; end before start crosses midnight. No browser permission grants.
 - `working`: optional weightUnit (`g` default, kg/lb/oz), orderSort
-  (`newest` default or `oldest`). Display choices never rescale domain data.
+  (`newest` default, `priority` for oldest unresolved first, or `recent` for latest activity). Display choices never rescale domain data.
 - `payments.preferredMethod`: automatic (default), nwc, webln or manual. This
   suggests an interface only: no spending permission, wallet selection or payment.
 - `storefront`: optional theme and layout (`grid` default or `list`); optional
@@ -76,13 +76,13 @@ Timezones use IANA names. Clients validate those registries, not only spelling.
   weekly days `mon` through `sun` (missing means closed) with arrays of
   non-overlapping `{start,end}` intervals, end strictly after start; overnight
   opening splits at midnight using end `24:00`. Date exceptions are a map of
-  YYYY-MM-DD to intervals, replacing that local day's weekly hours.
+  YYYY-MM-DD to intervals, replacing that local day's weekly hours. `priority` and `recent` order sorting are client interpretations; they cannot change order state.
 - Public `shipping.defaultPolicy`: null or `30406:<author>:<nonempty d>`.
   Validate same-author binding and resolve the actual policy before use.
 
 ## Evolution, bounds and egress
 
-Documents are at most 32768 UTF-8 JSON bytes, at most 12 nested containers,
+Documents are at most 32768 UTF-8 JSON bytes, maximum JSON value depth 12 (root depth 0),
 128 members per object, 128 items per array, 4096 code points per unknown string.
 Private NIP-44 base64 content is at most 44000 ASCII characters; real signer and
 relay limits may be smaller. Reject oversize drafts before signing; never truncate.
@@ -113,7 +113,7 @@ across tabs. Retain the actual editing baseline and explicit changes. Before
 signing, perform a bounded read and reconcile retained signed evidence. Rebase
 only disjoint edits onto newer observed state; overlapping changes retain the
 draft and require review. Units are ordinary scalar fields, the complete address
-book/default pointer, business-hours object, layout and individual extensions.
+book/default pointer, general-location object, business-hours object, service-language array, layout and individual extensions. A client may keep unsupported extension editing read-only.
 Preserve unknown nested fields from the newest baseline during known-field edits.
 
 Stage exact signed bytes atomically before publication. Private persistent data
