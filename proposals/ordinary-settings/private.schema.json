@@ -1,0 +1,358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "format": {
+      "type": "string",
+      "const": "openmarkets.private-settings"
+    },
+    "version": {
+      "type": "number",
+      "const": 1
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "display": {
+          "type": "object",
+          "properties": {
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            "bitcoinUnit": {
+              "type": "string",
+              "enum": [
+                "bitcoin",
+                "sats"
+              ]
+            },
+            "language": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$",
+              "maxLength": 64
+            },
+            "locale": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$",
+              "maxLength": 64
+            }
+          },
+          "additionalProperties": {}
+        },
+        "appearance": {
+          "type": "object",
+          "properties": {
+            "theme": {
+              "type": "string",
+              "enum": [
+                "system",
+                "day-market",
+                "night-market"
+              ]
+            },
+            "reducedMotion": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": {}
+        },
+        "shipping": {
+          "type": "object",
+          "properties": {
+            "savedAddresses": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "recipientName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "addressLine1": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "addressLine2": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "city": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "stateOrRegion": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  "country": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{2}$"
+                  },
+                  "email": {
+                    "type": "string",
+                    "maxLength": 320
+                  },
+                  "phone": {
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "label": {
+                    "type": "string",
+                    "maxLength": 80
+                  }
+                },
+                "required": [
+                  "recipientName",
+                  "addressLine1",
+                  "city",
+                  "postalCode",
+                  "country"
+                ],
+                "additionalProperties": {}
+              },
+              "maxProperties": 32
+            },
+            "defaultAddressId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "savedAddresses",
+            "defaultAddressId"
+          ],
+          "additionalProperties": {}
+        },
+        "notifications": {
+          "type": "object",
+          "properties": {
+            "orders": {
+              "type": "boolean"
+            },
+            "messages": {
+              "type": "boolean"
+            },
+            "quietHours": {
+              "type": "object",
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                },
+                "end": {
+                  "type": "string",
+                  "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                },
+                "timezone": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "start",
+                "end",
+                "timezone"
+              ],
+              "additionalProperties": {}
+            }
+          },
+          "additionalProperties": {}
+        },
+        "working": {
+          "type": "object",
+          "properties": {
+            "weightUnit": {
+              "type": "string",
+              "enum": [
+                "g",
+                "kg",
+                "lb",
+                "oz"
+              ]
+            },
+            "orderSort": {
+              "type": "string",
+              "enum": [
+                "newest",
+                "priority",
+                "recent"
+              ]
+            }
+          },
+          "additionalProperties": {}
+        },
+        "payments": {
+          "type": "object",
+          "properties": {
+            "preferredMethod": {
+              "type": "string",
+              "enum": [
+                "automatic",
+                "nwc",
+                "webln",
+                "manual"
+              ]
+            }
+          },
+          "required": [
+            "preferredMethod"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      "additionalProperties": {}
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "data": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        "required": [
+          "version",
+          "data"
+        ],
+        "additionalProperties": {}
+      },
+      "maxProperties": 16
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "settings"
+  ],
+  "additionalProperties": {},
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          }
+        }
+      ]
+    },
+    "bounded": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "maxLength": 4096
+        },
+        {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/bounded"
+          }
+        },
+        {
+          "type": "object",
+          "maxProperties": 128,
+          "propertyNames": {
+            "maxLength": 128,
+            "not": {
+              "enum": [
+                "__proto__",
+                "prototype",
+                "constructor",
+                "visibility",
+                "mnemonic",
+                "seed",
+                "nsec",
+                "privateKey",
+                "walletId",
+                "wallets",
+                "walletRecords",
+                "recovery",
+                "defaultWalletId",
+                "paySelectedAt",
+                "receiveSelectedAt",
+                "credentials",
+                "nwcUri",
+                "rates",
+                "countries",
+                "restrictTo",
+                "exclude",
+                "originCountry",
+                "price",
+                "weightBands"
+              ]
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/bounded"
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/$defs/bounded"
+    }
+  ]
+}
