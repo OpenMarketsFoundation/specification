@@ -31,6 +31,10 @@ Only the current e-commerce material is normative today. Future market lanes can
 
 When there is any ambiguity, [SPEC.md](SPEC.md) controls for current compatibility.
 
+## Experimental Testing Proposal
+
+- [Commerce testing](proposals/commerce-testing.md): voluntary test-event labels and dedicated test identities for bounded interoperability sessions. This proposal does not change the current specification.
+
 ## Prior Work
 
 This repository builds on and preserves links to the current Nostr commerce design space:
