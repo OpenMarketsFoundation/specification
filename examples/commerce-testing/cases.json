@@ -1,0 +1,132 @@
+{
+  "status": "experimental",
+  "format": "synthetic-policy-scenarios-v1",
+  "proposal": "../../proposals/commerce-testing.md",
+  "namespace": "org.openmarkets.testing",
+  "label": "org.openmarkets.testing:test",
+  "cases": [
+    {
+      "id": "TEST-01",
+      "scenario": "Tagged listing in ordinary discovery and direct access",
+      "observations": {"authenticated": true, "kind": 30402, "canonical_self_label": true},
+      "expected": {"context": "test", "ordinary_discovery": "hidden", "direct_access": "visibly_test", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-02",
+      "scenario": "Private order and response between configured participants",
+      "observations": {"authenticated": true, "session_agreed": true, "canonical_self_label": true, "message_sequence": ["order", "response"]},
+      "expected": {"context": "test", "each_generated_rumor": "canonically_labeled", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-03",
+      "scenario": "Authenticated follow-up omits its label",
+      "observations": {"authenticated": true, "participant_binding": "matches", "persisted_transaction_context": "test", "canonical_self_label": false},
+      "expected": {"context": "test", "diagnostic": "missing_test_label", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-04",
+      "scenario": "Test order references a known live product",
+      "observations": {"authenticated": true, "canonical_self_label": true, "referenced_product_context": "live"},
+      "expected": {"automatic_processing": "rejected", "referenced_product": "unchanged", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-05",
+      "scenario": "External label claims another author's listing is a test",
+      "observations": {"authenticated": true, "kind": 1985, "target_self_label": false, "target_test_roster_member": false, "target_persisted_test_context": false},
+      "expected": {"target_context": "unchanged", "target_handling": "existing_rules"}
+    },
+    {
+      "id": "TEST-06",
+      "scenario": "Test publication attempts to replace a known live coordinate",
+      "observations": {"publication_context": "test", "coordinate_history": "live", "same_kind_author_d": true},
+      "expected": {"signing": "blocked", "publication": "blocked", "live_resource": "unchanged"}
+    },
+    {
+      "id": "TEST-07",
+      "scenario": "Test transaction reaches a real-value wallet operation",
+      "observations": {"authenticated": true, "persisted_transaction_context": "test", "payment_provider": "real_value"},
+      "expected": {"context": "test", "wallet_operation": "blocked", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-08",
+      "scenario": "Duplicate delivery and retry after restart",
+      "observations": {"authenticated": true, "participant_binding": "matches", "persisted_transaction_context": "test", "delivery_sequence": ["initial", "restart", "duplicate", "retry"]},
+      "expected": {"context": "test", "deduplication": "existing_rules", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-09",
+      "scenario": "Configured test author omits its event marker",
+      "observations": {"authenticated": true, "kind": 30402, "author_in_selected_test_roster": true, "canonical_self_label": false},
+      "expected": {"context": "test", "diagnostic": "missing_test_label", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-10",
+      "scenario": "Operator removes identity from roster after a test transaction",
+      "observations": {"authenticated": true, "persisted_transaction_context": "test", "author_in_selected_test_roster": false, "canonical_self_label": false},
+      "expected": {"context": "test", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-11",
+      "scenario": "Invalid signature, sender binding, or authorization despite roster membership",
+      "observations": {"authenticated": false, "author_in_selected_test_roster": true, "canonical_self_label": true},
+      "expected": {"processing": "rejected", "legitimate_state": "unchanged", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-12",
+      "scenario": "Unrostered author self-labels a valid commerce event",
+      "observations": {"authenticated": true, "kind": 30402, "author_in_selected_test_roster": false, "canonical_self_label": true},
+      "expected": {"context": "test", "roster_lookup_required": false, "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-13",
+      "scenario": "Malformed or unsupported testing declarations",
+      "observations": {
+        "authenticated": true,
+        "tag_variants": [
+          [["L", "org.openmarkets.testing"]],
+          [["l", "org.openmarkets.testing:test", "org.openmarkets.testing"]],
+          [["L", "org.openmarkets.testing"], ["l", "org.openmarkets.testing:test", "wrong.namespace"]],
+          [["L", "org.openmarkets.testing"], ["l", "org.openmarkets.testing:live", "org.openmarkets.testing"]],
+          [["L", "org.openmarkets.testing"], ["l", "org.openmarkets.testing:test", "org.openmarkets.testing", "extra"]]
+        ]
+      },
+      "expected": {"each_variant": "quarantined", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-14",
+      "scenario": "Private message keeps testing metadata inside authenticated rumor",
+      "observations": {"authenticated_inner_author": true, "canonical_label_location": "rumor", "seal_tags": [], "testing_metadata_added_to_gift_wrap": false},
+      "expected": {"recipient_context": "test", "public_envelope": "ordinary_routing_only", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-15",
+      "scenario": "Test order references a resource whose context is unavailable",
+      "observations": {"authenticated": true, "canonical_self_label": true, "referenced_product_context": "unresolved"},
+      "expected": {"automatic_processing": "deferred", "referenced_product_context": "unresolved", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-16",
+      "scenario": "Ordinary valid event with no testing signals",
+      "observations": {"authenticated": true, "kind": 30402, "canonical_self_label": false, "author_in_selected_test_roster": false, "persisted_test_context": false},
+      "expected": {"handling": "existing_rules", "new_purchase_authority": false, "global_test_metadata_lookup_required": false}
+    },
+    {
+      "id": "TEST-17",
+      "scenario": "Replacement removes the label from a previously observed test coordinate",
+      "observations": {"authenticated": true, "canonical_self_label": false, "authenticated_coordinate_history": "test"},
+      "expected": {"context": "test", "diagnostic": "missing_test_label", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-18",
+      "scenario": "Unmarked private commerce arrives at a configured test recipient",
+      "observations": {"authenticated": true, "recipient_binding": "matches", "recipient_in_selected_test_roster": true, "canonical_self_label": false},
+      "expected": {"recipient_context": "test", "diagnostic": "missing_test_label", "live_effects": "blocked"}
+    },
+    {
+      "id": "TEST-19",
+      "scenario": "Outbound private test order targets a recipient without prior agreement",
+      "observations": {"publication_context": "test", "session_agreed": false},
+      "expected": {"order_initiation": "blocked", "publication": "blocked", "live_effects": "blocked"}
+    }
+  ]
+}
