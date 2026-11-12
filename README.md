@@ -504,6 +504,7 @@ Important considerations:
   - Lightning format: `["payment", "lightning", "<bolt11-invoice or lud16>"]`
   - Bitcoin format: `["payment", "bitcoin", "<btc-address>"]`
   - eCash format: `["payment", "ecash", "<cashu-req>"]`
+  - LNURLcash format: `["payment", "lnurlcash", "<accepted-service-url>"]` — merchant signals acceptance of LUD-25 bearer notes from an issuing service
 - `expiration`: Include if the payment format has a defined expiration time
 
 ```jsonc
@@ -521,6 +522,7 @@ Important considerations:
     ["payment", "lightning", "<bolt11-invoice|lud16>"],
     ["payment", "bitcoin", "<btc-address>"],
     ["payment", "ecash", "<cashu-req>"],
+    ["payment", "lnurlcash", "<accepted-service-url>"],
     ["expiration", "<unix-timestamp>"],
   ],
   "content": "Payment instructions and notes"
@@ -545,6 +547,7 @@ In this mode, the merchant MUST set valid payment options in their kind:`0` even
     ["payment", "lightning", "<bolt11-invoice|bolt12-offer>"],
     ["payment", "bitcoin", "<btc-address>"],
     ["payment", "ecash", "<cashu-req>"],
+    ["payment", "lnurlcash", "<accepted-service-url>"],
   ],
   "content": "Service-generated payment details"
 }
@@ -674,6 +677,7 @@ Sent by buyer to confirm payment completion. The receipt can include proof of pa
     - Lightning: `["payment", "lightning", "<invoice>", "<preimage>"]`
     - Bitcoin: `["payment", "bitcoin", "<address>", "<txid>"]`
     - eCash: `["payment", "ecash", "<mint-url>", "<proof>"]`
+    - LNURLcash: `["payment", "lnurlcash", "<service-url>", "<note>"]` — a LUD-25 bearer note redeemable via LNURL-withdraw; the merchant MUST redeem it before confirming the order
     - Fiat: `["payment", "fiat", "<some-id>", "<some-proof>"]`
 - `amount`: Payment amount
 
@@ -691,6 +695,7 @@ Sent by buyer to confirm payment completion. The receipt can include proof of pa
     ["payment", "lightning", "<invoice>", "<preimage>"],
     ["payment", "bitcoin", "<address>", "<txid>"],
     ["payment", "ecash", "<mint-url>", "<proof>"],
+    ["payment", "lnurlcash", "<service-url>", "<note>"],
     ["payment", "fiat", "<some-id>", "<some-proof>"],
 
     // Metadata
@@ -801,6 +806,7 @@ If not present, it defaults to `manual`. The preferences are processed in this o
    - Supports automatic payments via:
      - eCash tokens (locked to merchant's pubkey)
      - Lightning (using merchant's `lud16` address)
+     - LNURLcash notes (LUD-25, draft — bearer notes redeemable via LNURL-withdraw)
 
 3. **Service-Based Processing**
    - Merchant MUST set `payment_preference` to `manual`
