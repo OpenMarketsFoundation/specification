@@ -25,8 +25,6 @@
 
 The protocol defines both required core components and optional features to support diverse marketplace needs.
 
-<br>
-
 ### Required Components
 Implementations MUST support the following core features:
 
@@ -34,8 +32,6 @@ Implementations MUST support the following core features:
 - Product collection events (Kind: 30405) for product-to-collection references
 - Merchant's preferences
 - Order communication and processing via [NIP-17](17.md) encrypted messages
-
-<br>
 
 ### Optional Components
 These features MAY be implemented based on specific marketplace needs:
@@ -47,16 +43,12 @@ These features MAY be implemented based on specific marketplace needs:
 - Product reviews (Kind: 31555)
 - Service assisted order and payment processing
 
-<br>
-
 #### Watch-only clients
 Watch-only clients are applications that allow users to display products without implementing full e-commerce capabilities. These clients don't need to support all required components - product rendering alone can be sufficient. However, ideally, they should also handle logic for looking up collections, reviews, and shipping options. Support for order communication using [NIP-17](17.md) is optional.
 
 <br>
 
 ## 2. Core Protocol Components
-
-<br>
 
 ### Core Flows
 1. Merchant Preferences
@@ -83,8 +75,6 @@ Standard e-commerce flow:
 5. Payment processing
 6. Order confirmation
 7. Encrypted message follow-up
-
-<br>
 
 ### Merchant Preferences
 Merchants MAY specify preferences for how they want users to interact with them, including which applications to use and payment methods to accept. These preferences ensure a consistent experience and streamline operations. Merchants indicate their preferences through two mechanisms:
@@ -122,8 +112,6 @@ This verification helps buyers follow merchant-approved paths and avoid potentia
 <br>
 
 ## 3. Events and Kinds
-
-<br>
 
 ### Product Listing (Kind: 30402)
 
@@ -211,8 +199,6 @@ Products are the core element in a marketplace. Each product listing MUST contai
 }
 ```
 
-<br>
-
 #### Notes
 1. Product Configuration:
    - Products can be simple, variable (with options), or variations of variable products
@@ -235,8 +221,6 @@ Products are the core element in a marketplace. Each product listing MUST contai
 4. Location Support:
    - Optional location data aids in local marketplace features, they can point to a collection event to inherit it's value
    - Geohash enables precise location-based searches, they can point to a collection event to inherit it's value
-
-<br>
 
 ### Product Collection (Kind: 30405)
 A specialized event type using [NIP-51](51.md) like list format to organize related products into groups. Collections allow merchants or any user to create meaningful product groupings and share common attributes that products can also reference, establishing one-to-many relationships.
@@ -287,8 +271,6 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
 }
 ```
 
-<br>
-
 #### Notes
 1. Collection Management:
    - Collections can contain any number of products
@@ -303,12 +285,8 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
    - Optional location data helps with marketplace organization
    - Enables geographic grouping of related products
 
-<br>
-
 ### Drafts
 Products and collections can be saved as private drafts while being prepared for publication. This allows merchants to work on listings before making them publicly visible. Implementation MUST follow [NIP-37](https://github.com/nostr-protocol/nips/blob/master/37.md) for draft management.
-
-<br>
 
 ### Shipping Option (Kind: 30406)
 A specialized event type for defining shipping methods, costs, and constraints. Shipping options can be published by merchants or third-party providers (delivery companies, DVMs, etc.) and referenced by product listings or collections.
@@ -381,8 +359,6 @@ A specialized event type for defining shipping methods, costs, and constraints. 
 }
 ```
 
-<br>
-
 #### Implementation Examples
 
 Local Pickup:
@@ -424,8 +400,6 @@ Standard Shipping:
   ]
 }
 ```
-
-<br>
 
 #### Notes
 1. Event Management:
@@ -469,12 +443,7 @@ The payment request flow can operate in two modes:
 1. Direct: Merchant processes requests manually. Payment request is initiated by the merchant
 2. Service-assisted: Merchant's payment service handles requests. Payment request is initiated by the buyer
 
-<br>
-
 ### Message Types
-
-<br>
-
 #### 1. Order Creation
 Sent by buyer to initiate order process.
 
@@ -520,13 +489,8 @@ Sent by buyer to initiate order process.
   "content": "Order notes or special requests"
 }
 ```
-
-<br>
-
 #### 2. Payment Request
 There are two variants depending on payment processing mode: manual or automatic processing. After the buyer pays the payment request, they MUST send a payment receipt to the merchant using a kind:`17` dm.
-
-<br>
 
 ##### Manual Processing (merchant → buyer)
 
@@ -579,8 +543,6 @@ Important considerations:
 }
 ```
 
-<br>
-
 ##### Automatic Processing (buyer → merchant)
 In this mode, the merchant MUST set valid payment options in their kind:`0` event (such as `cashu` or `lud16`). The key difference is that the buyer initiates the payment request using information provided by the merchant. For merchants using `manual` payment preference, they SHOULD use [NIP-89](89.md) to specify their preferred payment processing service, which can then automatically handle payment requests on their behalf, as described in the merchant preferences section above.
 
@@ -604,8 +566,6 @@ In this mode, the merchant MUST set valid payment options in their kind:`0` even
   "content": "Service-generated payment details"
 }
 ```
-
-<br>
 
 #### 3. Order Status Updates
 Once the merchant receives payment, they MUST update the status to "confirmed". Status updates can be sent as soon as a new order is acknowledged, initially setting the status to "pending". The "pending" status is optional and can be skipped, starting directly with "confirmed" once payment is received.
@@ -660,8 +620,6 @@ Buyers may also send a status update to cancel an order, ideally before the stat
 }
 ```
 
-<br>
-
 #### 4. Shipping Updates
 Sent by merchant to provide delivery tracking and status information.
 
@@ -703,8 +661,6 @@ Sent by merchant to provide delivery tracking and status information.
 }
 ```
 
-<br>
-
 #### 5. General Communication
 Used for any order-related messages (Kind 14)
 
@@ -719,8 +675,6 @@ Used for any order-related messages (Kind 14)
   "content": "General communication message"
 }
 ```
-
-<br>
 
 #### 6. Payment Receipt
 Sent by buyer to confirm payment completion. The receipt can include proof of payment from any payment system, including traditional fiat gateways.
@@ -764,8 +718,6 @@ Sent by buyer to confirm payment completion. The receipt can include proof of pa
   "content": "Payment confirmation details"
 }
 ```
-
-<br>
 
 #### Notes
 1. Message Flow:
@@ -824,16 +776,12 @@ Product reviews follow [NIP-85](https://github.com/nostr-protocol/nips/blob/b143
 }
 ```
 
-<br>
-
 #### Rating Calculation
 The final score combines the primary "thumb" rating (50% weight) with additional category ratings (50% combined weight):
 
 ```
 Total Score = (Thumb × 0.5) + (0.5 × (∑(Category Ratings) ÷ Number of Categories))
 ```
-
-<br>
 
 #### Notes
 1. Rating System:
@@ -846,11 +794,7 @@ Total Score = (Thumb × 0.5) + (0.5 × (∑(Category Ratings) ÷ Number of Categ
 
 ## 6. Implementation Guidelines
 
-<br>
-
 ### Payment Flow Details
-
-<br>
 
 #### Payment Preferences
 Merchants can specify their payment preferences in their kind:`0` event using the `payment_preference` tag:
@@ -863,8 +807,6 @@ If not present, it defaults to `manual`. The preferences are processed in this o
 2. eCash: Ideally the merchant has a kind `10019` event to know what mint they prefer.
   - If the `10019` event is not present, payment can be made by sending the token embedded directly in the order receipt message from a previously set mint (whether default or user selected); otherwise, the merchant's preferred mint SHOULD be used.
 3. Lightning: Requires `lud16` or related lightning fields in kind `0`
-
-<br>
 
 #### Payment Processing Scenarios
 
@@ -895,8 +837,6 @@ For all scenarios:
 - Message direction is determined by `p` tag
 - Merchant's [NIP-89](89.md) application preferences SHOULD be respected
 
-<br>
-
 ### Marketplace Application Role
 Marketplace applications can optionally facilitate the order processing and payment request by:
 
@@ -907,8 +847,6 @@ Marketplace applications can optionally facilitate the order processing and paym
 5. Price calculations
 
 This provides a smoother user experience while maintaining the ability for direct merchant-buyer communication as a fallback mechanism.
-
-<br>
 
 ### Notes and Considerations
 
