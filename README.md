@@ -1,7 +1,15 @@
-Marketplace Protocol
----------------------------
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/open-markets-horizontal-dark.png">
+    <img src="assets/open-markets-horizontal.png" width="460" alt="Open Markets Foundation">
+  </picture>
+</p>
 
-A protocol specification for decentralized marketplaces on Nostr that provides an interoperable, full-featured e-commerce framework.
+<h1 align="center">Marketplace Protocol</h1>
+
+<p align="center">A Nostr specification for product listings, orders, payments, and shipping.</p>
+
+<br>
 
 ## Table of Contents
 1. Protocol Requirements
@@ -10,6 +18,8 @@ A protocol specification for decentralized marketplaces on Nostr that provides a
 4. Order Communication Flow and Payment Processing
 5. Product Reviews
 6. Implementation Guidelines
+
+<br>
 
 ## 1. Protocol Requirements
 
@@ -35,6 +45,8 @@ These features MAY be implemented based on specific marketplace needs:
 
 #### Watch-only clients
 Watch-only clients are applications that allow users to display products without implementing full e-commerce capabilities. These clients don't need to support all required components - product rendering alone can be sufficient. However, ideally, they should also handle logic for looking up collections, reviews, and shipping options. Support for order communication using [NIP-17](17.md) is optional.
+
+<br>
 
 ## 2. Core Protocol Components
 
@@ -96,6 +108,8 @@ Buyers can verify merchant preferences by:
 - Checking kind `0` events for payment preferences
 
 This verification helps buyers follow merchant-approved paths and avoid potential scams or poor experiences.
+
+<br>
 
 ## 3. Events and Kinds
 
@@ -401,6 +415,8 @@ Standard Shipping:
    - Group options by service type and location
    - Use geohash for distance-based sorting
    - Validate package constraints before offering options
+
+<br>
 
 ## 4. Order Communication Flow and Payment Processing
 
@@ -717,6 +733,8 @@ Sent by buyer to confirm payment completion. The receipt can include proof of pa
    - Include timestamps for all updates
    - Provide clear user messages
 
+<br>
+
 ## 5. Product Reviews (Kind: 31555)
 
 Product reviews follow [NIP-85](https://github.com/nostr-protocol/nips/blob/b1432b705f553bde6c4eb5fcfde8525d2913b477/85.md) and [QTS](https://habla.news/u/arkinox@arkinox.tech/DLAfzJJpQDS4vj3wSleum) guidelines with additional marketplace-specific rating criteria. Reviews provide structured feedback about products, merchants, and the overall purchase experience.
@@ -771,6 +789,8 @@ Total Score = (Thumb × 0.5) + (0.5 × (∑(Category Ratings) ÷ Number of Categ
    - Additional categories are optional
    - Scores support fractional values between 0-1
    - Custom categories can be added
+
+<br>
 
 ## 6. Implementation Guidelines
 
