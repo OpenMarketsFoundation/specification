@@ -133,6 +133,7 @@ Products are the core element in a marketplace. Each product listing MUST contai
 
 - Physical Properties:
   - `weight`: Product weight `[<value>, <unit>]` using ISO 80000-1
+  - `packing_weight`: Optional `["packing_weight", "<grams>"]` for weight-band shipping. Nonnegative whole grams of packing per unit, added to the product weight.
   - `dim`: Dimensions `[<l>x<w>x<h>, <unit>]` using ISO 80000-1
 
 - Location:
@@ -284,7 +285,7 @@ A specialized event type for defining shipping methods, costs, and constraints. 
 **Required tags**:
 - `d`: Unique shipping option identifier
 - `title`: Display title for the shipping method
-- `price`: Base cost array `[<base_cost>, <currency>]`
+- Pricing: either `["price", "<base_cost>", "<currency>"]` or a weight-band rate table as defined below.
 - `country`: Array of ISO 3166-1 alpha-2 country codes `[<code1>, <code2>, ...]`
 - `service`: Service type ("standard", "express", "overnight", "pickup")
 
@@ -388,6 +389,45 @@ Standard Shipping:
   ]
 }
 ```
+
+#### Weight-band rate tables
+
+A merchant MAY publish a kind `30406` shipping option that charges once for the combined weight of physical items. A calculated option has one table for its entire delivery area. Different rates or free-shipping thresholds for another area use a separate option.
+
+| Tag | Meaning |
+| --- | --- |
+| `["weight_rate", "<max-grams>", "<amount>", "<currency>"]` | One band with an inclusive upper weight in positive whole grams and a total charge for that band. Repeat for each band. |
+| `["free_shipping", "<subtotal>"]` | Optional merchandise subtotal in the table currency at which the entire shipping charge is waived. At most one per option. |
+
+A table contains at least one band. All bands use the same ISO 4217 currency and distinct weight limits. Monetary values are nonnegative decimal strings in major currency units. A table is used for shipping services and MUST omit `price`, `price-weight`, `price-volume`, and `price-distance`.
+
+Each shipped product or variation directly references its merchant's table using `["shipping_option", "30406:<merchant-pubkey>:<d-tag>", "<extra-cost>"]`. The existing optional `extra-cost` is handling per unit in the product currency. Omitted handling and packing weight each default to zero.
+
+1. Group all physical items shipping from the same merchant to the same destination under the selected option. Use one signed revision of the option for the whole group. Exclude digital and pickup items.
+2. Check destination eligibility and the option's other shipping constraints. Each line requires a positive product weight and a positive whole quantity. Sum `(unit weight in grams + packing weight) × quantity` across the group. Select the smallest band limit at or above that sum. Missing required inputs, invalid table terms, or weight above the largest band leave the charge undetermined.
+3. Charge the selected band's amount once, plus the sum of `extra-cost × quantity`. If a threshold is present and the group's merchandise subtotal meets or exceeds it, the charge is zero, including handling. Use merchandise value after agreed discounts, excluding tax and shipping. Compare and add amounts in the table currency using exact decimal amounts. If conversion is needed, the parties must agree on the converted amounts to determine the charge.
+
+```json
+{
+  "kind": 30406,
+  "id": "400bff52e51b0a0939179637978ff71ae84bac83c3600e458fd7cb4d1c2bcbc5",
+  "pubkey": "aa89595e1d7383aaa1611ba8823b2d7609220e7cffccdcdaef2152c11d00c1da",
+  "created_at": 1795651200,
+  "tags": [
+    ["d", "us-ground"],
+    ["title", "US ground shipping"],
+    ["country", "US"],
+    ["service", "standard"],
+    ["weight_rate", "1000", "6.00", "USD"],
+    ["weight_rate", "2000", "9.00", "USD"],
+    ["free_shipping", "75.00"]
+  ],
+  "content": "Ground shipping for parcels up to 2 kg.",
+  "sig": "b60d149f08a9978aed48eb70c73fad954c289aca4f7b4de9ddcd68c9a1839b7adbfe55fe89c017807600cb2cbaa2e3bc8deb895d5be4121cf8893c3a1a15477e"
+}
+```
+
+For this option, two USD 20 items weighing 400 g each, with 100 g of packing and USD 1 handling per unit, weigh 1,000 g together. Shipping is USD 6 + USD 2 = **USD 8**. At a merchandise subtotal of USD 75, the same shipment is free. Above 2,000 g the table supplies no quote, even when the subtotal reaches USD 75.
 
 #### Notes
 1. Event Management:
