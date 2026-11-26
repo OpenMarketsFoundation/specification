@@ -464,7 +464,19 @@ Sent by buyer to initiate order process.
 
 Use separate product lines for units with different selections. When a product line has quantity greater than one, each unit receives the same selections. Each linked modifier quantity MUST be a positive whole multiple of the product quantity. The merchant checks each accepted group’s selection limits per unit and includes each modifier line in the total once.
 
-For example, the buyer orders two identical shirts and wants only the second one gift-wrapped. These are the three `item` tags in order:
+**Coffee.** The first drink is a 16 oz latte with oat milk and two pumps of vanilla. The second is an americano with an extra shot. The shot points to item `3`, the americano.
+
+```json
+[
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:latte-16-oz", "1"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:oat-milk", "1", "0"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:syrup-vanilla", "2", "0"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:americano", "1"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:extra-shot", "1", "3"]
+]
+```
+
+**Clothing.** The buyer orders two identical shirts and wants only the second one gift-wrapped. These are the three `item` tags in order:
 
 ```json
 [
