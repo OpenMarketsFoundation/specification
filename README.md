@@ -155,6 +155,7 @@ Products are the core element in a marketplace. Each product listing MUST contai
   - `t`: Product categories/tags, MAY appear multiple times
   - `a`: Product reference "30402:<pubkey>:<d-tag>", MUST appear only once to reference parent products in a variable/variation configuration
   - `a`: Collection reference "30405:<pubkey>:<d-tag>", MAY appear multiple times
+  - `modifier_group`: An optional `["modifier_group", "<30405 group address>"]` on a sellable product names a group of add-ons it accepts. Repeat for each group.
   - `shipping_option`: Shipping options, MAY appear multiple times
     - Format: "30406:<pubkey>:<d-tag>" for direct options
     - Format: "30405:<pubkey>:<d-tag>" for collection shipping
@@ -284,6 +285,32 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
 3. Location Support:
    - Optional location data helps with marketplace organization
    - Enables geographic grouping of related products
+
+#### Product modifiers (optional)
+
+A `kind:30405` collection with `["type", "modifier_group"]` lists add-ons a buyer can select for one unit of a product. Each add-on is a simple `kind:30402` product with its own price (zero is allowed) and stock when tracked. The group lists each add-on with an `a` tag. The add-on identifies its group with an `a` tag pointing back to that collection. An add-on belongs to one modifier group and is ordered with a product that accepts that group.
+
+Each modifier group has one `["select", "<min>", "<max>"]` tag. Both values are decimal integer strings with `0 ≤ min ≤ max` and `max ≥ 1`. Count units selected across the group, including repeated units of the same add-on.
+
+For example, a shirt listing can offer gift wrapping by including `["modifier_group", "30405:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:wrapping"]`. The following group allows one gift wrap per shirt:
+
+```json
+{
+  "kind": 30405,
+  "pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
+  "created_at": 1764000000,
+  "tags": [
+    ["d", "wrapping"],
+    ["title", "Gift wrapping"],
+    ["type", "modifier_group"],
+    ["select", "0", "1"],
+    ["a", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:gift-wrap"]
+  ],
+  "content": "",
+  "id": "fffd503b3c9dc34a59e16dfcded68e9778cb8be0c7bb486e889b878d31063bd6",
+  "sig": "4027e8359fb01ac68507ed23fadbebd5ba52150e3fbd6cc1e4ca49f996e8bb16281e2b097eb5677d4e2561774f3382170979af75996c7b8f209172ec4a28ac59"
+}
+```
 
 ### Drafts
 Products and collections can be saved as private drafts while being prepared for publication. This allows merchants to work on listings before making them publicly visible. Implementation MUST follow [NIP-37](https://github.com/nostr-protocol/nips/blob/master/37.md) for draft management.
@@ -446,6 +473,32 @@ The payment request flow can operate in two modes:
 ### Message Types
 #### 1. Order Creation
 Sent by buyer to initiate order process.
+
+**Ordering an item with modifiers.** A modifier uses `["item", "<modifier address>", "<quantity>", "<item index>"]`. The index is a zero-based decimal integer string counting only `item` tags in their original order. It MUST point to a non-modifier line whose product accepts the modifier’s group. A modifier requires this link.
+
+Use separate product lines for units with different selections. When a product line has quantity greater than one, each unit receives the same selections. Each linked modifier quantity MUST be a positive whole multiple of the product quantity. The merchant checks each accepted group’s selection limits per unit and includes each modifier line in the total once.
+
+**Coffee.** The first drink is a 16 oz latte with oat milk and two pumps of vanilla. The second is an americano with an extra shot. The shot points to item `3`, the americano.
+
+```json
+[
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:latte-16-oz", "1"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:oat-milk", "1", "0"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:syrup-vanilla", "2", "0"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:americano", "1"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:extra-shot", "1", "3"]
+]
+```
+
+**Clothing.** The buyer orders two identical shirts and wants only the second one gift-wrapped. These are the three `item` tags in order:
+
+```json
+[
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:shirt-medium", "1"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:shirt-medium", "1"],
+  ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:gift-wrap", "1", "1"]
+]
+```
 
 **Content:** (Optional) Human readable order notes or special requests
 
