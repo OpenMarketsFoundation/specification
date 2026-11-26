@@ -691,6 +691,42 @@ The buyer sends evidence of payment to the merchant. The merchant MUST verify pa
 }
 ```
 
+#### 7. Merchant Payment Receipt (kind `1341`, proposed)
+
+`draft` · `optional`
+
+Kind `1341` is a signed receipt from the merchant for one payment credited to a buyer’s order. The merchant MAY include it in the private `confirmed` status update as `["receipt", "<signed event JSON>"]`. The buyer can share that event separately. Clients MUST NOT publish it automatically.
+
+The receipt’s `content` is empty. Each of these tags is required exactly once:
+
+| Tag | Meaning |
+| --- | --- |
+| `["p", "<buyer-pubkey>"]` | Public key that authored the order, in lowercase hex. |
+| `["order", "<order-id>"]` | The order identifier from the buyer’s order. |
+| `["amount", "<satoshis>"]` | Amount credited by this payment, as a positive decimal integer string. |
+| `["payment", "<medium>", "<reference>"]` | For `lightning`, the BOLT11 payment hash in lowercase hex. For `bitcoin`, the lowercase transaction ID and decimal output index joined by `:`. For a native `spark` BTC transfer, the transfer UUID. |
+
+Verify the event ID and signature under [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md) and match the signer to the expected merchant. The signature authenticates the merchant’s acknowledgment. To check payment independently, use evidence for the named payment method. To associate the receipt with a buyer’s review, match the review author to the receipt’s `p` tag.
+
+Example receipt for the two-mug order above:
+
+```json
+{
+  "id": "20376ae8f44fc151f5ae8c72bcfa7c23daa2af875ae02f6aa75d4f755d0dd1fc",
+  "pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
+  "created_at": 1764000300,
+  "kind": 1341,
+  "tags": [
+    ["p", "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"],
+    ["order", "459e7ca2-3ca5-496d-8974-c6321ecbbb15"],
+    ["amount", "12000"],
+    ["payment", "lightning", "dda6271ba0dcd9ee624f18df8f629b6bae08d208b017b50e06e6128d47e28641"]
+  ],
+  "content": "",
+  "sig": "b0e585f1281d902abbdd4d921db92d8c66aba17e5cce2bc03a266aafedcd79b8a0971081b9d1815873c8fb0c9bff4b040ab52a992fffc6ff5f6d4f040a3c183a"
+}
+```
+
 #### Compatibility
 
 Earlier clients use kind `16` with numeric `type` values `1`, `2`, `3`, and `4` for `order`, `payment_request`, `status_update`, and `shipping_update`, respectively. They use kind `17` for buyer payment proof without a `type` tag. Readers MAY accept a legacy rumor when its required commerce tags and sender direction match the corresponding message above. Kind alone is ambiguous because [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md) assigns `16` to generic reposts and [NIP-25](https://github.com/nostr-protocol/nips/blob/master/25.md) assigns `17` to external-content reactions.
