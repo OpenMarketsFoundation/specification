@@ -404,28 +404,17 @@ Standard Shipping:
 
 ## 4. Order Communication Flow and Payment Processing
 
-Order processing and status updates use [NIP-17](17.md) encrypted direct messages, with three event kinds serving different purposes:
+Kind `1327` is the proposed inner event kind for private structured order messages. The sender seals and gift-wraps the unsigned event (rumor) using [NIP-17](https://github.com/nostr-protocol/nips/blob/master/17.md) and [NIP-59](https://github.com/nostr-protocol/nips/blob/master/59.md). Order details belong inside the rumor. Ordinary conversation uses kind `14`.
 
-- Kind `14`: Regular communication between parties
-  - General inquiries and responses
-  - Order clarifications
-  - Subject can be order ID or empty
-  
-- Kind `16`: Order processing and status. These messages include a `type` field that indicates the specific kind of message
-  - Order creation and details. `type`: 1
-  - Payment requests. `type`: 2
-  - Status updates. `type`: 3
-  - Shipping information. `type`: 4
-  
-- Kind `17`: Payment receipts and verification
+Each structured message carries `["p", "<recipient-pubkey>"]`, `["order", "<order-id>"]`, `["subject", "<human-readable subject>"]`, and `["type", "<message-type>"]`. The buyer assigns a unique order ID at creation. Both parties reuse it for that order. The rumor author identifies the sender. The `content` field contains human-readable text or the empty string.
 
-Message direction is determined by the author, and `p` tag:
-- Buyer → Merchant: event author is the buyer, `p` tag contains merchant's pubkey
-- Merchant → Buyer: event author is the merchant, `p` tag contains buyer's pubkey
-
-The payment request flow can operate in two modes:
-1. Direct: Merchant processes requests manually. Payment request is initiated by the merchant
-2. Service-assisted: Merchant's payment service handles requests. Payment request is initiated by the buyer
+| Message type | Sender → recipient | Purpose |
+| --- | --- | --- |
+| `order` | Buyer → merchant | Place an order. |
+| `payment_request` | Merchant → buyer (manual) or buyer → merchant (automatic) | Specify the amount and payment options. |
+| `status_update` | Merchant → buyer, or buyer → merchant to cancel | Report order status. |
+| `shipping_update` | Merchant → buyer | Report shipping status and tracking. |
+| `payment_proof` | Buyer → merchant | Supply evidence for the merchant to verify. |
 
 ### Message Types
 #### 1. Order Creation
@@ -436,7 +425,7 @@ Sent by buyer to initiate order process.
 **Required tags:**
 - `p`: Merchant's public key
 - `subject`: Human-friendly subject line for order information
-- `type`: Must be "1" to indicate order creation
+- `type`: `order`
 - `order`: Unique identifier for the order
 - `amount`: Total order amount in satoshis
 - `item`: Product reference in format "30402:<pubkey>:<d-tag>" with quantity. MAY appear multiple times
@@ -448,33 +437,28 @@ Sent by buyer to initiate order process.
 - `phone`: Customer phone number for contact
 - Other optional tags can be added with more details from the customer
 
-```jsonc
+Example of an unsigned order rumor
+
+```json
 {
-  "kind": 16,
+  "id": "2e6c543ae35ed79e50e1a65d3524a943e620bad309b42c95cd9fcbcd0879ae86",
+  "pubkey": "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+  "created_at": 1764000000,
+  "kind": 1327,
   "tags": [
-    // Required tags
-    ["p", "<merchant-pubkey>"],
-    ["subject", "<order-info subject>"],
-    ["type", "1"],  // Order creation
-    ["order", "<order-id>"],  // Unique order identifier
-    ["amount", "<total-amount-in-sats>"],
-    
-    // Order items (can repeat)
-    ["item", "30402:<pubkey>:<d-tag>", "<quantity>"],
-    
-    // Shipping details
-    ["shipping", "30406:<pubkey>:<d-tag>"],
-    ["address", "<shipping-address>"],
-    
-    // Customer contact
-    ["email", "<customer-email>"],  // Optional
-    ["phone", "<customer-phone>"],  // Optional
+    ["p", "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5"],
+    ["subject", "Order for two mugs"],
+    ["type", "order"],
+    ["order", "459e7ca2-3ca5-496d-8974-c6321ecbbb15"],
+    ["amount", "12000"],
+    ["item", "30402:c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5:blue-mug", "2"]
   ],
-  "content": "Order notes or special requests"
+  "content": "I will pick these up on Saturday."
 }
 ```
+
 #### 2. Payment Request
-There are two variants depending on payment processing mode: manual or automatic processing. After the buyer pays the payment request, they MUST send a payment receipt to the merchant using a kind:`17` dm.
+There are two variants depending on payment processing mode: manual or automatic processing. After the buyer pays the payment request, they MUST send the merchant a `payment_proof` message.
 
 ##### Manual Processing (merchant → buyer)
 
@@ -493,7 +477,7 @@ Important considerations:
 **Required tags:**
 - `p`: Buyer's public key
 - `subject`: Human-friendly subject line for order payment requests
-- `type`: Must be "2" to indicate payment request
+- `type`: `payment_request`
 - `order`: The unique order identifier from the original order
 - `amount`: Total payment amount in satoshis
 
@@ -507,12 +491,12 @@ Important considerations:
 
 ```jsonc
 {
-  "kind": 16,
+  "kind": 1327,
   "tags": [
     // Required tags
     ["p", "<buyer-pubkey>"],
     ["subject", "order-payment"],
-    ["type", "2"],  // Payment request
+    ["type", "payment_request"],  // Payment request
     ["order", "<order-id>"],
     ["amount", "<total-amount-in-sats>"],
     
@@ -532,12 +516,12 @@ In this mode, the merchant MUST set valid payment options in their kind:`0` even
 
 ```jsonc
 {
-  "kind": 16,
+  "kind": 1327,
   "tags": [
     // Required tags
     ["p", "<merchant-pubkey>"],
     ["subject", "order-payment"],
-    ["type", "2"],  // Payment request
+    ["type", "payment_request"],  // Payment request
     ["order", "<order-id>"],
     ["amount", "<total-amount-in-sats>"],
     
@@ -552,14 +536,14 @@ In this mode, the merchant MUST set valid payment options in their kind:`0` even
 ```
 
 #### 3. Order Status Updates
-Once the merchant receives payment, they MUST update the status to "confirmed". Status updates can be sent as soon as a new order is acknowledged, initially setting the status to "pending". The "pending" status is optional and can be skipped, starting directly with "confirmed" once payment is received.
+Once the merchant verifies receipt of payment for the order, they MUST send a `status_update` with `["status", "confirmed"]`. The merchant MAY send `pending` while awaiting payment.
 
 **Content:** (Optional) Human readable status update
 
 **Required tags:**
-- `p`: Buyer's public key
+- `p`: Recipient’s public key
 - `subject`: Human-friendly subject line for status updates
-- `type`: Must be "3" to indicate status update
+- `type`: `status_update`
 - `order`: The original order identifier
 - `status`: Current order status:
   - `pending`: Order received but awaiting payment
@@ -570,12 +554,12 @@ Once the merchant receives payment, they MUST update the status to "confirmed". 
 
 ```jsonc
 {
-  "kind": 16,
+  "kind": 1327,
   "tags": [
     // Required tags
     ["p", "<buyer-pubkey>"],
     ["subject", "order-info"],
-    ["type", "3"],  // Status update
+    ["type", "status_update"],  // Status update
     ["order", "<order-id>"],
     
     // Status information
@@ -589,16 +573,16 @@ Buyers may also send a status update to cancel an order, ideally before the stat
 
 ```jsonc
 {
-  "kind": 16,
+  "kind": 1327,
   "tags": [
     // Required tags
     ["p", "<merchant-pubkey>"],
     ["subject", "order-info"],
-    ["type", "3"],  // Status update
+    ["type", "status_update"],  // Status update
     ["order", "<order-id>"],
     
     // Status information
-    ["status", "<order-status>"],  // cancelled
+    ["status", "cancelled"],
   ],
   "content": "Human readable status update"
 }
@@ -612,7 +596,7 @@ Sent by merchant to provide delivery tracking and status information.
 **Required tags:**
 - `p`: Buyer's public key
 - `subject`: Human-friendly subject line for shipping updates
-- `type`: Must be "4" to indicate shipping update
+- `type`: `shipping_update`
 - `order`: The original order identifier
 - `status`: Current shipping status:
   - `processing`: Order is being prepared for shipping
@@ -627,12 +611,12 @@ Sent by merchant to provide delivery tracking and status information.
 
 ```jsonc
 {
-  "kind": 16,
+  "kind": 1327,
   "tags": [
     // Required tags
     ["p", "<buyer-pubkey>"],
     ["subject", "shipping-info"],
-    ["type", "4"],  // Shipping update
+    ["type", "shipping_update"],  // Shipping update
     ["order", "<order-id>"],
     
     // Shipping details
@@ -660,14 +644,15 @@ Used for any order-related messages (Kind 14)
 }
 ```
 
-#### 6. Payment Receipt
-Sent by buyer to confirm payment completion. The receipt can include proof of payment from any payment system, including traditional fiat gateways.
+#### 6. Payment Proof
+The buyer sends evidence of payment to the merchant. The merchant MUST verify payment for the referenced order before reporting it as `confirmed`.
 
 **Content:** (Optional) Human readable payment confirmation details
 
 **Required tags:**
 - `p`: Merchant's public key
-- `subject`: Human-friendly subject line for order receipt
+- `type`: `payment_proof`
+- `subject`: Human-friendly subject line for payment evidence
 - `order`: The original order identifier
 - `payment`: Payment proof details (at least one required):
   - Generic format: `["payment", "<medium>", "<medium-reference>", "<proof>"]`
@@ -681,11 +666,12 @@ Sent by buyer to confirm payment completion. The receipt can include proof of pa
 
 ```jsonc
 {
-  "kind": 17,
+  "kind": 1327,
   "tags": [
     // Required tags
     ["p", "<merchant-pubkey>"],
     ["subject", "order-receipt"],
+    ["type", "payment_proof"],
     ["order", "<order-id>"],
     
     // Payment proof (one required)
@@ -703,9 +689,15 @@ Sent by buyer to confirm payment completion. The receipt can include proof of pa
 }
 ```
 
+#### Compatibility
+
+Earlier clients use kind `16` with numeric `type` values `1`, `2`, `3`, and `4` for `order`, `payment_request`, `status_update`, and `shipping_update`, respectively. They use kind `17` for buyer payment proof without a `type` tag. Readers MAY accept a legacy rumor when its required commerce tags and sender direction match the corresponding message above. Kind alone is ambiguous because [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md) assigns `16` to generic reposts and [NIP-25](https://github.com/nostr-protocol/nips/blob/master/25.md) assigns `17` to external-content reactions.
+
+During migration, send kind `1327` to peers known to support it. Use the legacy format when support is unknown. Send only one representation of each message.
+
 #### Notes
 1. Message Flow:
-   - Receipts should include verifiable proofs
+   - Payment proofs should include verifiable evidence
 
 2. Payment Processing:
    - Manual mode provides more flexibility
@@ -785,7 +777,7 @@ Merchants can specify their payment preferences in their kind:`0` event using th
 If not present, it defaults to `manual`. The preferences are processed in this order of complexity:
 1. Manual (default): Merchant provides payment requests directly
 2. eCash: Ideally the merchant has a kind `10019` event to know what mint they prefer.
-  - If the `10019` event is not present, payment can be made by sending the token embedded directly in the order receipt message from a previously set mint (whether default or user selected); otherwise, the merchant's preferred mint SHOULD be used.
+  - If the `10019` event is not present, payment can be made by sending the token embedded directly in the `payment_proof` message from a previously set mint (whether default or user selected); otherwise, the merchant's preferred mint SHOULD be used.
 3. Lightning: Requires `lud16` or related lightning fields in kind `0`
 
 #### Payment Processing Scenarios
@@ -813,7 +805,7 @@ If not present, it defaults to `manual`. The preferences are processed in this o
    - Service handles payment details and completion monitoring
 
 For all scenarios:
-- Buyer MUST send payment receipt after completion
+- Buyer MUST send `payment_proof` after payment
 - Message direction is determined by `p` tag
 - Merchant's [NIP-89](89.md) application preferences SHOULD be respected
 
@@ -821,7 +813,7 @@ For all scenarios:
 Marketplace applications can optionally facilitate the order processing and payment request by:
 
 1. Generating payment requests based on merchant preferences when buyers initiate orders
-2. Verifying payments and generating receipts automatically by prompting the buyer to sign the event
+2. Helping the buyer send payment evidence and the merchant verify it
 3. Helping merchants managing inventory and order status updates
 4. Coordinating shipping information
 5. Price calculations
