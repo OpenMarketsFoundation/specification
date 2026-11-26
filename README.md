@@ -347,6 +347,42 @@ A specialized event type for defining shipping methods, costs, and constraints. 
 }
 ```
 
+#### Destination eligibility
+
+A kind `30406` shipping option MAY narrow its `country` and optional `region` coverage with repeated `destination` tags.
+
+| Tag | Matches |
+| --- | --- |
+| `["destination", "<include or exclude>", "country", "<country>"]` | The uppercase ISO 3166-1 alpha-2 country code. |
+| `["destination", "<include or exclude>", "subdivision", "<subdivision>"]` | The full uppercase ISO 3166-2 code, including its country prefix. |
+| `["destination", "<include or exclude>", "postal", "<country>", "<exact or prefix>", "<value>"]` | The entire postal code or its leading characters, within the specified country. |
+
+Postal values on the event use uppercase ASCII letters and digits. For comparison, remove ASCII spaces and hyphens from the buyer's postal code and uppercase ASCII letters. Preserve leading zeroes. For example, `["destination", "include", "postal", "GB", "prefix", "BT"]` matches `bt7 1nn` in GB.
+
+The destination must be in a listed country and, if `region` is present, a listed subdivision. Within that coverage, any matching exclusion rules the option out. When includes are present, at least one must match. Tag order has no effect. Each option is evaluated independently.
+
+A client MUST have enough destination information to establish the match before quoting the option. An unknown or malformed `destination` rule prevents a quote for that option. In the example below, a US address in Oregon qualifies, an Alaska address is excluded, and a US address without a subdivision needs that information before it can be quoted.
+
+```json
+{
+  "kind": 30406,
+  "id": "2d2dde7c61afff4ad7a629b3ea718c888e92e4648c6ea1f4a6785f01cff17b4c",
+  "pubkey": "4490745b384f32a7913dfc852091c6ce254357097b23e9ca14e537ff7006bb76",
+  "created_at": 1795651200,
+  "tags": [
+    ["d", "us-standard"],
+    ["title", "US standard shipping"],
+    ["price", "5.99", "USD"],
+    ["country", "US"],
+    ["service", "standard"],
+    ["destination", "exclude", "subdivision", "US-AK"],
+    ["destination", "exclude", "subdivision", "US-HI"]
+  ],
+  "content": "US shipping except Alaska and Hawaii.",
+  "sig": "0f8e7ba0d69cca4c1ef2e741a5306b786c4d9b14fb27b961b175f939b74001fee7225d71b674c64aac82fe65f70f9d4dc88818de9ef78d713a685382917db12b"
+}
+```
+
 #### Implementation Examples
 
 Local Pickup:
