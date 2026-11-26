@@ -1,8 +1,6 @@
 Marketplace Protocol
 ---------------------------
 
-`draft`
-
 A protocol specification for decentralized marketplaces on Nostr that provides an interoperable, full-featured e-commerce framework.
 
 ## Table of Contents
