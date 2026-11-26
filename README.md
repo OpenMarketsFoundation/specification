@@ -1,7 +1,13 @@
-Marketplace Protocol
----------------------------
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/open-markets-horizontal-dark.png">
+    <img src="assets/open-markets-horizontal.png" width="330" alt="Open Markets Foundation">
+  </picture>
+</p>
 
-A protocol specification for decentralized marketplaces on Nostr that provides an interoperable, full-featured e-commerce framework.
+<h1 align="center">Marketplace Protocol</h1>
+
+<p align="center">A Nostr specification for product listings, orders, payments, and shipping.</p>
 
 ## Table of Contents
 1. Protocol Requirements
