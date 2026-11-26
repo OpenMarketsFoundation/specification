@@ -2,6 +2,8 @@
 
 Open Markets is a commerce specification for Nostr. A proposal should give independent implementations enough information to exchange the same event and agree on what it means. Clients can then choose how to present it, store it, and act on it.
 
+<br>
+
 ## Opening a proposal
 
 Open a pull request against `main` and edit the relevant section of `README.md`. Keep each proposal focused on one change that can be reviewed and implemented on its own.
@@ -14,9 +16,13 @@ Use **`(Area) Change`** for the proposal and PR title. Inside the parentheses, n
 
 Use the PR description to explain the problem, link related work, and identify decisions that need review. Keep the proposed specification readable on its own after the PR discussion is gone.
 
+<br>
+
 ## Writing the specification
 
 Use [NIP-99](https://github.com/nostr-protocol/nips/blob/master/99.md) as a model for structure and scope.
+
+<br>
 
 ### 1. State the scope and status
 
@@ -33,6 +39,8 @@ Before introducing a kind, check whether an existing event already represents th
 | Ephemeral | A transient signal that relays need not retain. |
 | Addressable | An author can update each named item independently using its `d` tag, as with a product listing or shipping option. |
 
+<br>
+
 ### 2. Define the event format
 
 State what belongs in `.content` and how another client interprets it. Specify whether it contains plain text, Markdown, serialized JSON, or an empty string. Keep structured fields that clients need to find or filter in tags when appropriate.
@@ -48,6 +56,8 @@ Show each new tag as a positional array. **Every tag element is a string**, incl
 
 For example, `["item", "30402:<merchant-pubkey>:<d-tag>", "<quantity>"]` tells a reader where the listing reference and quantity go. The accompanying text should also say whether quantity must be a positive whole number and how to represent an order containing several products.
 
+<br>
+
 ### 3. Specify the rules needed for interoperability
 
 Use `MUST` and `MUST NOT` for requirements, `SHOULD` and `SHOULD NOT` for recommendations with room for justified exceptions, and `MAY` for optional behavior. Use them sparingly.
@@ -56,11 +66,15 @@ Be precise where a different interpretation would change the outcome. For an ord
 
 Leave UI, storage, deployment, and application policy to implementers. Introduce a required message sequence only when the order of messages matters to interoperability or cryptography. Keep commerce-specific validation, aggregation, and business rules off relays. Avoid nested payloads that duplicate tags or hide fields another client needs to interpret.
 
+<br>
+
 ### 4. Include a complete example
 
 Include a realistic, valid, copy-pasteable event in JSON or YAML. Show the required fields and common optional tags. Use an unsigned inner event when that is the object being specified. If an example is presented as signed, its ID and signature should verify.
 
 Where the proposal defines a calculation or matching rule, give the expected result as well. A shipping example is more useful when a reviewer can tell exactly what two clients should charge for the same basket.
+
+<br>
 
 ## Before merging
 
