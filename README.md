@@ -287,7 +287,7 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
 
 ### (Events) Define event markets and occurrence-specific offers
 
-`draft` · `optional`
+`optional`
 
 A proposed kind `30409` event market admits merchants, kind `31925` RSVPs record their participation, and kind `30402` listings offer stock and prices for individual NIP-52 occurrences. Buyers order those offers through existing private kind `16` messages.
 
