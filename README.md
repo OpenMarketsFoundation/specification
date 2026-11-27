@@ -289,13 +289,13 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
 
 `optional`
 
-A proposed kind `30409` event market admits merchants, kind `31925` RSVPs record their participation, and kind `30402` listings offer stock and prices for individual NIP-52 occurrences. Buyers order those offers through existing private kind `16` messages.
+An **event market** (proposed kind `30409`) describes an organized occasion where merchants offer goods or services to shoppers. It can take place in person, online, or both. At a craft fair, a shopper might collect a mug at a booth. During a livestream, a viewer might order the mug for shipping or buy a pattern for download.
 
-An **event market** is an organized occasion where merchants offer goods or services to shoppers. It can take place in person, online, or both. At a craft fair, a shopper might collect a mug at a booth. During a livestream, a viewer might order the mug for shipping or buy a pattern for download.
+The organizer publishes the market and admits merchants. Each merchant signs up for a specific occurrence and publishes its offers on its existing product listings. An offer states the quantity available at that occurrence and, optionally, a price different from the ordinary listing price.
 
-#### Market and occurrences
+#### The market and its occurrences
 
-The organizer publishes an addressable market record (proposed kind `30409`). Its `content` is a plain-text description. Include exactly one `["d", "<market identifier>"]`, one `["title", "<market name>"]`, one schedule reference and one market state. Each merchant on the current roster has one `merchant` tag. Use the shorter form for a merchant without event pickup and the longer form when the roster specifies a handoff. An empty roster admits nobody.
+The organizer publishes an addressable market record. Its `content` is a plain-text description of the market. Include one `d` tag for its identifier, one `title` tag for its name, one schedule reference, and one market state. Include one `merchant` tag per admitted merchant. For event pickup, include the handoff and pickup label in that merchant’s entry.
 
 ```text
 ["a", "<schedule address>"]
@@ -310,7 +310,7 @@ A one-off market references a [NIP-52 occurrence](https://github.com/nostr-proto
 
 When the merchant offers event pickup, handoff is `merchant_present` or `organizer_handoff` and the label identifies the booth or collection point. Shipping and digital delivery require no pickup details. The organizer may admit its own merchant key.
 
-#### Merchant participation
+#### The merchant opts in
 
 Use a merchant-signed [NIP-52 RSVP](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-event-rsvp), kind `31925`. The RSVP `content` is an optional free-form note (use `""` when omitted). The merchant uses one stable `d` per market and occurrence pair and reuses it for updates. Include exactly one of each tag below, in addition to `d`.
 
