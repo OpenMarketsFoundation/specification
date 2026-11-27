@@ -285,6 +285,109 @@ A specialized event type using [NIP-51](51.md) like list format to organize rela
    - Optional location data helps with marketplace organization
    - Enables geographic grouping of related products
 
+### (Events) Define event markets and occurrence-specific offers
+
+`optional`
+
+An **event market** (proposed kind `30409`) describes an organized occasion where merchants offer goods or services to shoppers. It can take place in person, online, or both. At a craft fair, a shopper might collect a mug at a booth. During a livestream, a viewer might order the mug for shipping or buy a pattern for download.
+
+The organizer publishes the market and admits merchants. Each merchant signs up for a specific occurrence and publishes its offers on its existing product listings. An offer states the quantity available at that occurrence and, optionally, a price different from the ordinary listing price.
+
+#### The market and its occurrences
+
+The organizer publishes an addressable market record. Its `content` is a plain-text description of the market. Include one `d` tag for its identifier, one `title` tag for its name, one schedule reference, and one market state. Include one `merchant` tag per admitted merchant. For event pickup, include the handoff and pickup label in that merchant’s entry.
+
+```text
+["a", "<schedule address>"]
+["event_market", "3", "<open|closed>"]
+["merchant", "<merchant pubkey>"]
+["merchant", "<merchant pubkey>", "<handoff>", "<pickup label>"]
+```
+
+Addresses use the NIP-01 `kind:pubkey:d` form. Public keys and event IDs are 64 lowercase hexadecimal characters. The `event_market` tag carries the profile version (`3`) and state (`open` or `closed`). The market identifier stays stable when the organizer updates the market. A collection (kind `30405`) groups products. The market record carries a roster and terms that the organizer can update independently of the calendar and listings.
+
+A one-off market references a [NIP-52 occurrence](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-events): kind `31922` for an all-day event or `31923` for a timed event. For a series, reference a [kind 31924 calendar](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar) and list each occurrence in it. The organizer signs the market, calendar, and occurrences. Use the current calendar list to establish membership. A timed occurrence MUST have an explicit NIP-52 `end` in Unix seconds, exclusive. A weekly stream can keep one calendar and give each episode its own address, even when every episode airs at the same URL.
+
+When the merchant offers event pickup, handoff is `merchant_present` or `organizer_handoff` and the label identifies the booth or collection point. Shipping and digital delivery require no pickup details. The organizer may admit its own merchant key.
+
+#### The merchant opts in
+
+Use a merchant-signed [NIP-52 RSVP](https://github.com/nostr-protocol/nips/blob/master/52.md#calendar-event-rsvp), kind `31925`. The RSVP `content` is an optional free-form note (use `""` when omitted). The merchant uses one stable `d` per market and occurrence pair and reuses it for updates. Include exactly one of each tag below, in addition to `d`.
+
+```text
+["a", "<occurrence address>"]
+["e", "<occurrence event ID>"]
+["market", "<market address>"]
+["status", "accepted"]
+```
+
+The `e` tag identifies the exact occurrence revision the merchant acknowledged. Status `tentative` or `declined` makes the RSVP inactive. The organizer’s current roster and the merchant’s accepted RSVP together establish participation. The merchant can withdraw by replacing the RSVP with `declined`. A merchant accepting event pickup also includes one `["handoff", "<handoff>", "<pickup label>"]` matching the roster entry.
+
+When the organizer edits the occurrence, compare the start, end, and event venue (including a published stream location) with the acknowledged revision. A changed schedule or venue calls for one fresh RSVP. A title correction or an edit to another episode leaves the acknowledgement usable. If the referenced revision is unavailable for comparison, the merchant must acknowledge the current revision before taking new event orders. Changed booth or handoff details require renewed acknowledgement for pickup only. A closed market, missing admission, ended or cancelled occurrence, or removal from the calendar makes the offer ineligible for new orders in that market. The organizer signals cancellation with `["status", "cancelled"]` on the occurrence.
+
+#### Offers on product listings
+
+On the merchant’s [kind 30402 product listing](#product-listing-kind-30402), `stock` and `price` describe the ordinary shop offer. The listing’s `content` remains its product description, with Markdown allowed. A sellable product or variation MAY add one offer row per occurrence in any of these forms.
+
+```text
+["a", "<occurrence address>", "", "offer", "<quantity>"]
+["a", "<occurrence address>", "", "offer", "<quantity>", "<amount>", "<currency>"]
+["a", "<occurrence address>", "", "offer", "<quantity>", "<amount>", "<currency>", "<frequency>"]
+```
+
+The [NIP-01 address reference](https://github.com/nostr-protocol/nips/blob/master/01.md#tags) identifies a particular NIP-52 occurrence by kind, organizer public key, and identifier. Clients can find candidate listings with a `#a` filter for that address. A client MUST include a listing in the market catalog only if the listing’s author is on the organizer’s current roster and that same author has a valid, accepted RSVP for this market and occurrence. The third position holds a relay hint or the empty string. Keep that position when omitting the hint. Only a NIP-52 occurrence reference marked `offer` has these stock and price semantics.
+
+- **Quantity.** Use a nonnegative integer string. Zero means sold out. An empty string offers the item subject to merchant confirmation without promising a number. Ordinary stock excludes event quantities. The occurrence quantity covers event orders across all supported fulfillment methods.
+- **Price.** Omit the entire price suffix to inherit the listing’s full `price` tag. When supplied, the suffix replaces the full price using a decimal amount, an ISO 4217 currency code and the listing’s optional billing frequency format. An explicit zero amount means free. Shipping charges still follow the selected shipping option.
+- **Scope.** One listing has one offer per occurrence, even if two market catalogs feature that same occurrence. A listing can have up to 32 occurrence rows. A missing offer means the product has no event offer for that occurrence. Duplicate rows or malformed quantities or prices make the affected offer unusable. An incomplete override cannot fall back to the ordinary price.
+
+#### Orders and organizer collection
+
+Use the existing [private order and payment messages](#4-order-communication-flow-and-payment-processing). An event order groups items from one merchant at one occurrence under one market. The buyer includes one `event` and one `fulfillment` tag in the order creation message (`type` `1`). Use the existing kind `16` content and required tags.
+
+```text
+["event", "<market address>", "<occurrence address>", "<occurrence event ID>"]
+["fulfillment", "<pickup|shipping|digital>"]
+```
+
+The event ID identifies the occurrence revision used for this order. The occurrence selects the offer’s stock and unit price. The market identifies the participation and payment terms. For `shipping`, select a product-authorized [shipping option](#shipping-option-kind-30406) and supply the delivery details in the private order. For `digital`, use the listing’s digital delivery terms. For `pickup`, include the agreed `handoff` tag from the RSVP. The selected method must be available for the product.
+
+The buyer’s order identifies the event and the selected fulfillment method (`pickup`, `shipping`, or `digital`). The payment request carries those same details. In manual payment processing, the merchant initiates the payment request. In automatic payment processing, the buyer initiates it using the merchant’s published payment information.
+
+A change to the buyer’s price, total, payment recipient, or agreed delivery or pickup terms needs buyer agreement before payment. Later edits do not rewrite accepted orders. An ordinary shop order uses ordinary stock and price, including when it ships exactly the same product.
+
+Direct payment to the merchant is the default. An organizer offering collection publishes one `["collection", "<policy>", "<rate_bps>", "<terms>"]` tag on the market. Without this tag, payment goes directly to the merchant. Policy is `optional` or `required`. The rate is a whole number of basis points encoded as a decimal string (1000 means 10%). The terms state the basis, rounding, and refund treatment. A merchant opts in by including the same tag once on its RSVP. Under `optional` policy, a merchant who omits it receives payment directly. The collector must be the market author and the terms must match. Changed standing terms require fresh consent. The parties may agree on a smaller fee for one sale. Where collection is required, missing consent blocks the event order.
+
+For a routed sale the merchant’s private payment request includes one `["collector", "<organizer pubkey>", "<fee_sats>"]` tag, giving the exact agreed deduction as a nonnegative whole number of satoshis in a decimal string, alongside the existing order ID, buyer total in sats, and payment instructions. Paying the authorized recipient completes the buyer’s agreed payment. An online organizer should forward a pre-approved merchant’s balance when receipt is confirmed. A payout failure remains between organizer and merchant.
+
+#### Example of a shipped mug sold on a livestream
+
+Clay Studio sells stoneware mugs for **USD 30** in its shop. For **River Live, episode 12**, it offers **20 mugs at USD 24 each**. Its listing references the organizer’s specific timed occurrence, identified by `river-live-episode-12`. Episode 13 could stream at the same URL and would have its own occurrence address.
+
+```json
+{
+  "kind": 30402,
+  "created_at": 1795651200,
+  "content": "Hand-thrown stoneware mug. Ships from Clay Studio.",
+  "tags": [
+    ["d", "stoneware-mug"],
+    ["title", "Stoneware mug"],
+    ["type", "simple", "physical"],
+    ["price", "30.00", "USD"],
+    ["stock", "70"],
+    ["shipping_option", "30406:9d8ef33e16e9ed756c78683c9831a2f9c823d54a3bb82bea6a4cb9e3aa507853:standard", "0"],
+    ["a", "31923:583544a33ac1067232ecba1d1dde16538e0eeaaff10a80544427b8a7dd51ae1f:river-live-episode-12", "", "offer", "20", "24.00", "USD"]
+  ],
+  "pubkey": "9d8ef33e16e9ed756c78683c9831a2f9c823d54a3bb82bea6a4cb9e3aa507853",
+  "id": "bcf9b7637442fc06d8d877020600d26a3bbfe32c367095b3f8eec9b096895852",
+  "sig": "68746258caa6c253c130acf3c10f1a684e3f66ca290ce58c7a5fa8df369a564f8c871aa64dc24116309118f40c7b6e2f7db51c4221769bbec51034591f0ad2c9"
+}
+```
+
+A viewer orders one mug during episode 12 and selects `shipping`. The event reference in the order points to the same episode as the listing’s offer row. If the selected standard shipping option costs USD 5, the quote is **USD 24 + USD 5 = USD 29** before any applicable taxes. After the sale the merchant’s listing can show **19** for episode 12 and **70** for the ordinary shop.
+
+**Same episode, inherited price.** If the merchant ends that same offer row immediately after `"20"`, the viewer still orders from the 20 episode mugs. The unit price is then the listing’s USD 30 and the same shipping option brings the quote to **USD 35**. A shop customer ordering outside the episode also sees USD 30, with availability taken from the 70 ordinary mugs.
+
 ### Drafts
 Products and collections can be saved as private drafts while being prepared for publication. This allows merchants to work on listings before making them publicly visible. Implementation MUST follow [NIP-37](https://github.com/nostr-protocol/nips/blob/master/37.md) for draft management.
 
